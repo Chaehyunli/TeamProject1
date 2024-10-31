@@ -48,6 +48,7 @@ android {
 
 dependencies {
 
+    implementation("androidx.appcompat:appcompat:1.6.1") // AppCompat 라이브러리 추가
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

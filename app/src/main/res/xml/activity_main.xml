@@ -1,0 +1,15 @@
+<!-- res/layout/activity_splash.xml -->
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:background="@color/ic_launcher_background"> <!-- 원하는 배경색 설정 -->
+
+    <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@mipmap/ic_launcher_foreground"
+            android:contentDescription="@string/splash_logo_description"
+            android:scaleType="centerInside"/>
+</LinearLayout>

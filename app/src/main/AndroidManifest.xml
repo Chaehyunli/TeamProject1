@@ -4,25 +4,26 @@
 
     <application
             android:allowBackup="true"
-            android:dataExtractionRules="@xml/data_extraction_rules"
-            android:fullBackupContent="@xml/backup_rules"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/Theme.MyApplication"
-            tools:targetApi="31">
+            android:theme="@style/SplashScreenTheme"> <!-- 앱 시작 테마를 스플래시 테마로 설정 -->
+g
+        <!-- SplashActivity에 스플래시 테마 적용 -->
         <activity
-                android:name=".MainActivity"
-                android:exported="true"
-                android:label="@string/app_name"
-                android:theme="@style/Theme.MyApplication">
+                android:name=".SplashActivity"
+                android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-    </application>
 
+        <!-- MainActivity에서는 기본 테마를 사용 -->
+        <activity
+                android:name=".MainActivity"
+                android:exported="true"
+                android:theme="@style/Theme.MyApplication"/>
+    </application>
 </manifest>
