@@ -1,5 +1,7 @@
 package com.example.myapplication
-import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+//import com.example.myapplication.RouteFinder
+//import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+// 지하철 역,노드, 간선 및 메인 함수가 있는 파일
 
 // Node 클래스 정의: 역 번호와 해당 역의 연결 정보 저장
 class Node(val stationNumber: Int) {
@@ -12,8 +14,8 @@ class Node(val stationNumber: Int) {
     }
 
     // 인접 역 추가
-    fun addNeighbor(destination: Int, distance: Int, cost: Int, time: Int) {
-        val edge = Edge(destination, distance, cost, time)
+    fun addNeighbor(destination: Int, distance: Int, cost: Int, time: Int, line: Int) {
+        val edge = Edge(destination, distance, cost, time, line)
         neighbors.add(edge)
     }
 
@@ -28,10 +30,11 @@ data class Edge(
     val destination: Int,   // 인접 역 번호
     val distance: Int,      // 거리
     val cost: Int,          // 비용
-    val time: Int           // 시간
+    val time: Int,          // 시간
+    val line: Int           // 노선 번호
 ) {
     override fun toString(): String {
-        return "(목적지: $destination, 거리: ${distance}m, 비용: ${cost}원, 시간: ${time}초)"
+        return "(목적지: $destination, 거리: ${distance}m, 비용: ${cost}원, 시간: ${time}초, 노선: $line)"
     }
 }
 
@@ -51,8 +54,13 @@ class SubwayGraph {
         addStation(station1, line)
         addStation(station2, line)
 
-        stations[station1]?.addNeighbor(station2, distance, cost, time)
-        stations[station2]?.addNeighbor(station1, distance, cost, time) // 양방향 연결
+        stations[station1]?.addNeighbor(station2, distance, cost, time, line)
+        stations[station2]?.addNeighbor(station1, distance, cost, time, line) // 양방향 연결
+    }
+
+    // 지정된 역 번호의 인접 역 목록을 반환하는 메소드
+    fun getNeighbors(stationNumber: Int): List<Edge>? {
+        return stations[stationNumber]?.neighbors
     }
 
     fun printTotalStations() {
@@ -203,7 +211,6 @@ class SubwayGraph {
         )
 
         for (entry in data) {
-            // entry 리스트의 요소를 인덱스를 통해 직접 접근
             val src = entry[0]
             val dst = entry[1]
             val time = entry[2]
@@ -211,7 +218,6 @@ class SubwayGraph {
             val money = entry[4]
             val line = entry[5]
 
-            // 그래프에 연결 추가
             graph.addConnection(src, dst, dis, money, time, line)
         }
     }
@@ -224,6 +230,7 @@ class SubwayGraph {
     }
 }
 
+
 // 실행 예제
 fun main() {
     val subwayGraph = SubwayGraph()
@@ -231,7 +238,17 @@ fun main() {
     // 데이터 직접 로드
     subwayGraph.loadDataDirectly(subwayGraph)
 
-    subwayGraph.printTotalStations()
     // 그래프 출력
+    subwayGraph.printTotalStations()
     subwayGraph.printGraph()
+
+    val routeFinder = RouteFinder(subwayGraph)
+    val startStation = 101 // 출발역
+    val endStation = 216 // 도착역
+
+    println("최소 시간 경로: ${routeFinder.findShortestTimePath(startStation, endStation)}")
+    println("최소 거리 경로: ${routeFinder.findShortestDistancePath(startStation, endStation)}")
+    println("최소 비용 경로: ${routeFinder.findCheapestPath(startStation, endStation)}")
+    println("최소 환승 경로: ${routeFinder.findFewestTransfersPath(startStation, endStation)}")
 }
+
