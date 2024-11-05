@@ -1,34 +1,40 @@
 package com.example.myapplication.ui.components
 // 입력 필드 아무곳이나 재사용 가능
+
+// 지금 한글 입력 자음에서 마우스 꾹 누른 상태로 모음으로 가야 입력되는 상태
+// 한글 키보드 나오게 하는법은 안드로이드 폰 설정에 들어가서 Languages & input 한국어 추가
+// 코딩으로 한글하고 숫자만 입력하게 해놓음. 영어 안쳐짐(우리 앱에서만)
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.input.ImeAction
 
-import com.example.myapplication.ui.navigation.AppNavHost // 아이콘 누르면 경로 이동
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class) // 이거 실험 버전 경고 뜨는 거 무시허는 구문, 앱 실행에는 아무런 문제 없음.
 @Composable
 fun RouteInputField(
     label: String,
     onDelete: () -> Unit,
     canDelete: Boolean,
-    focusManager: FocusManager // focusManager 매개변수 추가
+    focusManager: FocusManager,
+    value: String,  // value 매개변수를 String 타입으로 선언
+    onValueChange: (String) -> Unit  // onValueChange 매개변수를 (String)
 ) {
     Row( // 입력 필드 전체(Row)에 대한 외부 스타일을 지정
         modifier = Modifier
@@ -39,8 +45,13 @@ fun RouteInputField(
         verticalAlignment = Alignment.CenterVertically
     ) {
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = value,
+            onValueChange = { newValue ->
+                // 입력값이 숫자 또는 한글일 경우에만 onValueChange 호출
+                if (newValue.all { it.isDigit() || it in '가'..'힣' }) {
+                    onValueChange(newValue)
+                }
+            },
             modifier = Modifier
                 .weight(1f)
                 .height(56.dp), // 필드 높이 조정
@@ -49,13 +60,14 @@ fun RouteInputField(
                 focusedBorderColor = Color.Transparent,
                 unfocusedBorderColor = Color.Transparent
             ),
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Done
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Default,
+                keyboardType = KeyboardType.Text // 한글 입력을 허용하도록 설정
             ),
             keyboardActions = KeyboardActions(
                 onDone = { focusManager.clearFocus() } // 엔터(완료) 키를 누르면 포커스 해제
             ),
-            textStyle = TextStyle(fontSize = 16.sp)
+            textStyle = TextStyle(fontSize = 16.sp),
         )
         if (canDelete) {
             IconButton(

@@ -13,5 +13,7 @@ fun AppNavHost(navController: NavHostController) {
         composable(Screen.MeetingPlace.route) { MeetingPlaceScreen(navController) }
         composable(Screen.MonthlyTransport.route) { MonthlyTransportScreen(navController) }
         composable(Screen.Settings.route) { SettingsScreen(navController) }
+
+        composable(Screen.MeetingPlaceResult.route) { MeetingPlaceResultScreen(navController) }
     }
 }
