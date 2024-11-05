@@ -78,6 +78,7 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                     // 입력 필드가 모두 비어있지 않은지 확인
                     if (inputFields.any { it.isBlank() }) {
                         showAlertDialog = true
+                        focusManager.clearFocus() // 버튼 클릭 시 포커스 해제
                     } else {
                         // 약속 장소 찾기 기능은 MeetingPlaceScreen에서 호출하여 데이터 준비
                         // 화면 전환 후, MeetingPlaceResultScreen에서 ViewModel을 참조하여 준비된 데이터를 표시
