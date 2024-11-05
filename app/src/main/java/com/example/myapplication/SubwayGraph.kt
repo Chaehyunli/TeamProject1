@@ -239,16 +239,57 @@ fun main() {
     subwayGraph.loadDataDirectly(subwayGraph)
 
     // 그래프 출력
-    subwayGraph.printTotalStations()
-    subwayGraph.printGraph()
+    //subwayGraph.printTotalStations()
+    //subwayGraph.printGraph()
 
     val routeFinder = RouteFinder(subwayGraph)
-    val startStation = 101 // 출발역
-    val endStation = 216 // 도착역
+    //val startStation = 101 // 출발역
+    //val endStation = 216 // 도착역
+    print("출발역 번호를 입력하세요: ")
+    val startStation = readLine()?.toIntOrNull() ?: run {
+        println("유효한 숫자가 아닙니다. 프로그램을 종료합니다.")
+        return
+    }
 
-    println("최소 시간 경로: ${routeFinder.findShortestTimePath(startStation, endStation)}")
-    println("최소 거리 경로: ${routeFinder.findShortestDistancePath(startStation, endStation)}")
-    println("최소 비용 경로: ${routeFinder.findCheapestPath(startStation, endStation)}")
-    println("최소 환승 경로: ${routeFinder.findFewestTransfersPath(startStation, endStation)}")
+    // 도착역 입력
+    print("도착역 번호를 입력하세요: ")
+    val endStation = readLine()?.toIntOrNull() ?: run {
+        println("유효한 숫자가 아닙니다. 프로그램을 종료합니다.")
+        return
+    }
+
+    //println("최소 시간 경로: ${routeFinder.findShortestTimePath(startStation, endStation)}")
+    //println("최소 거리 경로: ${routeFinder.findShortestDistancePath(startStation, endStation)}")
+    //println("최소 비용 경로: ${routeFinder.findCheapestPath(startStation, endStation)}")
+    //println("최소 환승 경로: ${routeFinder.findFewestTransfersPath(startStation, endStation)}")
+
+    // 각 기준별 경로 탐색
+    val shortestTimeRoute = routeFinder.findShortestTimePath(startStation, endStation)
+    val shortestDistanceRoute = routeFinder.findShortestDistancePath(startStation, endStation)
+    val cheapestRoute = routeFinder.findCheapestPath(startStation, endStation)
+    val fewestTransfersRoute = routeFinder.findFewestTransfersPath(startStation, endStation)
+
+    val routes = listOf(
+        shortestTimeRoute,
+        shortestDistanceRoute,
+        cheapestRoute,
+        fewestTransfersRoute
+    )
+
+    // 각 기준 별 정렬
+    //  println(it) -> RouteFinder routes의 toString() 메서드 호출
+    println("\n=== 최소 거리 기준으로 정렬 ===")
+    routes.sortedBy { it.distance }.forEach { println(it) }
+    // routes.sortedBy { it.distance } 까지가 객체
+
+    println("\n=== 최소 시간 기준으로 정렬 ===")
+    routes.sortedBy { it.time }.forEach { println(it) }
+
+    println("\n=== 최소 비용 기준으로 정렬 ===")
+    routes.sortedBy { it.cost }.forEach { println(it) }
+
+    println("\n=== 최소 환승 기준으로 정렬 ===")
+    routes.sortedBy { it.transfers }.forEach { println(it) }
+
 }
 
