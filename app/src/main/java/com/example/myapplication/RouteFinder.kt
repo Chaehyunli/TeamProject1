@@ -97,8 +97,11 @@ class RouteFinder(private val graph: SubwayGraph) {
         val path: List<Int>,
         val currentLine: Int  // 현재 노선 번호를 저장하여 환승 여부 판단
     ) {
+        val criteria: MutableSet<String> = mutableSetOf() // 해당 경로가 최소 시간, 최소 비용, 최소 거리, 최소 환승 어떠한 것들에 해당되는지에 대한 정보
+
         override fun toString(): String {
-            return "시간: ${time}초, 거리: ${distance}m, 비용: ${cost}원, 환승 횟수: $transfers, 경로: ${path.joinToString(" -> ")}"
+            val criteriaStr = if (criteria.isNotEmpty()) "${criteria.joinToString(" / ")}  - " else ""
+            return "${criteriaStr}시간: ${time}초, 거리: ${distance}m, 비용: ${cost}원, 환승 횟수: $transfers, 경로: ${path.joinToString(" -> ")}"
         }
     }
 }
