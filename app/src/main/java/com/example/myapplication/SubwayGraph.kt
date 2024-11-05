@@ -304,6 +304,15 @@ fun main() {
         }
     }
 
+    // 최소 환승 경로를 찾고, 다른 경로에 동일한 환승 횟수가 있으면 `최소 환승` 기준을 추가
+    val minTransfersRoute = uniqueRoutes.find { it.criteria.contains("최소 환승") }
+    if (minTransfersRoute != null) {
+        uniqueRoutes.filter { it != minTransfersRoute && it.transfers == minTransfersRoute.transfers }.forEach {
+            it.criteria.add("최소 환승")
+        }
+        //uniqueRoutes.remove(minTransfersRoute) // 기존 최소 환승 경로 삭제
+    }
+    
     // 각 기준 별 정렬
     //  println(it) -> RouteFinder routes의 toString() 메서드 호출
     println("\n=== 최소 거리 기준으로 정렬 ===")
