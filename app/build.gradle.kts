@@ -54,15 +54,24 @@ android {
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.6.1") // AppCompat 라이브러리 추가
+    implementation("androidx.appcompat:appcompat:1.6.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
+
+    // Compose UI 및 관련 라이브러리
+    implementation("androidx.compose.material3:material3:1.0.1") // material3 라이브러리
+    implementation("androidx.compose.material:material-icons-extended:1.5.0") // material3 아이콘
+
+    implementation("androidx.compose.foundation:foundation:1.5.0") // Foundation 라이브러리
+    implementation("androidx.compose.ui:ui:1.5.0") // Compose UI 라이브러리
+    implementation("androidx.compose.ui:ui-tooling-preview:1.5.0") // UI 툴링 프리뷰
+
+    implementation("androidx.navigation:navigation-compose:2.5.3") // 하단 바 아이콘 누르면 다른 스크린으로 이동하게 설정
+    
+
+    // 기타 테스트 및 디버그 라이브러리
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

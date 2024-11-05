@@ -9,7 +9,7 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/SplashScreenTheme"> <!-- 앱 시작 테마를 스플래시 테마로 설정 -->
-g
+
         <!-- SplashActivity에 스플래시 테마 적용 -->
         <activity
                 android:name=".SplashActivity"
