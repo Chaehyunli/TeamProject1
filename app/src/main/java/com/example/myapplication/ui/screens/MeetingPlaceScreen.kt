@@ -1,4 +1,5 @@
 package com.example.myapplication.ui.screens
+
 // 약속장소 찾기 버튼 누를 시에 기능 호출하게 하는 거 구현해야함.
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.myapplication.SubwayGraphInstance
 
 import com.example.myapplication.ui.components.BottomNavigationBar // 하단 아이콘 nav
 import com.example.myapplication.ui.components.RouteInputField
@@ -24,6 +26,7 @@ fun MeetingPlaceScreen(navController: NavHostController) {
     val focusManager = LocalFocusManager.current // focusManager 선언
     var selectedItem by remember { mutableStateOf(1) } // 현재 선택된 BottomNavigation 아이템 (약속장소 추천)
     var showAlertDialog by remember { mutableStateOf(false) }
+    var invalidStationAlert by remember { mutableStateOf(false) }
     var inputFields = remember { mutableStateListOf("", "") } // 각 필드의 텍스트 값을 저장하는 리스트
 
     Column(
@@ -79,7 +82,14 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                     if (inputFields.any { it.isBlank() }) {
                         showAlertDialog = true
                         focusManager.clearFocus() // 버튼 클릭 시 포커스 해제
-                    } else {
+                    } else if (inputFields.any { field ->
+                            val stationNumber = field.toIntOrNull()
+                            stationNumber == null || SubwayGraphInstance.subwayGraph.getNeighbors(stationNumber) == null
+                        }){
+                        // 유효하지 않은 역 번호가 있는 경우 경고 표시
+                        invalidStationAlert = true
+
+                    }else{
                         // 약속 장소 찾기 기능은 MeetingPlaceScreen에서 호출하여 데이터 준비
                         // 화면 전환 후, MeetingPlaceResultScreen에서 ViewModel을 참조하여 준비된 데이터를 표시
                         // 이렇게 하면 MeetingPlaceResultScreen은 데이터 준비에 신경 쓰지 않고, 결과를 보여주는 역할만 담당
@@ -105,6 +115,14 @@ fun MeetingPlaceScreen(navController: NavHostController) {
             WarningDialog(
                 message = "※ 출발지를 입력하세요.",
                 onDismiss = { showAlertDialog = false }
+            )
+        }
+
+        // 유효하지 않은 역 경고문 출력
+        if (invalidStationAlert) {
+            WarningDialog(
+                message = "※ 지하철 역이 유효하지 않습니다.",
+                onDismiss = { invalidStationAlert = false }
             )
         }
 
