@@ -8,7 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusManager
+    import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
@@ -91,11 +91,12 @@ fun MeetingPlaceScreen(navController: NavHostController) {
 
                     }else{
                         // 약속 장소 찾기 기능은 MeetingPlaceScreen에서 호출하여 데이터 준비
-                        // 화면 전환 후, MeetingPlaceResultScreen에서 ViewModel을 참조하여 준비된 데이터를 표시
                         // 이렇게 하면 MeetingPlaceResultScreen은 데이터 준비에 신경 쓰지 않고, 결과를 보여주는 역할만 담당
-
+                        val result = SubwayGraphInstance.calculateMeetingPlaceRoute(inputFields)
+                        // result에 약속 장소 기능 결과 저장 -> result.bestStation // result.timesFromStartStations: List<Int> 이런 식으로
                         // 여기서 약속 장소 찾기 기능 호출
-                        navController.navigate("meeting_place_result") // 화면 전환
+                        // 예시 출력 -> result : MeetingPlaceResult(bestStation=303, timesFromStartStations=[1200, 1130, 1630, 1330])
+                        //navController.navigate("meeting_place_result") // 화면 전환
                         focusManager.clearFocus() // 버튼 클릭 시 포커스 해제
                     }
                 },
