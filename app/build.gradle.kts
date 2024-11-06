@@ -82,4 +82,5 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:1.5.0") // UI 툴링 프리뷰
 
     implementation("androidx.navigation:navigation-compose:2.5.3") // 하단 바 아이콘 누르면 다른 스크린으로 이동하게 설정
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1") // 최신 버전을 사용할 수 있음
 }
