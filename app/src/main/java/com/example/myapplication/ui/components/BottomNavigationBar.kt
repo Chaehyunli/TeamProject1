@@ -1,3 +1,4 @@
+//하단 네비게이션 바
 package com.example.myapplication.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
