@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId = "com.example.myapplication"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -54,11 +54,24 @@ android {
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.6.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.2.0")
+
+    implementation("androidx.appcompat:appcompat:1.6.1")
 
     // Compose UI 및 관련 라이브러리
     implementation("androidx.compose.material3:material3:1.0.1") // material3 라이브러리
@@ -69,15 +82,5 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:1.5.0") // UI 툴링 프리뷰
 
     implementation("androidx.navigation:navigation-compose:2.5.3") // 하단 바 아이콘 누르면 다른 스크린으로 이동하게 설정
-    
-
-    // 기타 테스트 및 디버그 라이브러리
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.2.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1") // 최신 버전을 사용할 수 있음
 }
