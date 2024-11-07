@@ -1,7 +1,6 @@
 package com.example.myapplication.ui.screens
-// 아이콘 생성 아직 못했음, 노선도에 할려면 위치 정보 필요함.
-// 근데 너무 복잡함. 하다가 망할 것 같아서 일단 뺏음
-import androidx.compose.foundation.Image
+
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -11,46 +10,51 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.myapplication.R
 import com.example.myapplication.ui.components.BottomNavigationBar
 
-@OptIn(ExperimentalMaterial3Api::class) // 이거 실험 버전 경고 뜨는 거 무시허는 구문, 앱 실행에는 아무런 문제 없음.
+// MeetingPlaceResultScreen.kt
+@OptIn(ExperimentalMaterial3Api::class) // 실험적 API 사용 경고 무시
 @Composable
-fun MeetingPlaceResultScreen(navController: NavHostController) {
+fun MeetingPlaceResultScreen(
+    navController: NavHostController,
+    result: MeetingPlaceResult,
+    inputFields: List<String>
+) {
     var selectedItem by remember { mutableStateOf(1) } // 현재 선택된 BottomNavigation 아이템 (약속장소 추천)
 
+    val meetingPlaceResult = result
+    val bestStation = meetingPlaceResult.bestStation
+    val timesFromStartStations = meetingPlaceResult.timesFromStartStations
+
+    // 소요 시간을 분과 초로 변환하는 함수
+    fun formatTime(seconds: Int): String {
+        val minutes = seconds / 60
+        val remainingSeconds = seconds % 60
+        return "${minutes}분 ${String.format("%02d", remainingSeconds)}초"
+    }
+
     Scaffold(
+        containerColor = Color.White,
         topBar = {
             TopAppBar(
-                title = {
-                    Text(
-                        text = "약속장소 결과 보기",
-                        fontSize = 20.sp,
-                        color = Color.Black,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                },
+                title = { Text("약속장소 결과 보기") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "뒤로가기",
-                            tint = Color(0xFF252F42)
+                            contentDescription = "뒤로가기"
                         )
                     }
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = Color.White // TopAppBar 배경색을 흰색으로 설정
+                    containerColor = Color.White
                 ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .shadow(4.dp) // 그림자 추가
+                modifier = Modifier.shadow(4.dp) // 그림자 추가
             )
         },
         bottomBar = {
@@ -64,18 +68,45 @@ fun MeetingPlaceResultScreen(navController: NavHostController) {
             )
         }
     ) { innerPadding ->
-        Box(
+        Column(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(innerPadding)
+                .fillMaxSize()
+                .padding(16.dp)
+                .background(Color.White),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 지도 이미지
-            Image(
-                painter = painterResource(id = R.drawable.map_image),
-                contentDescription = "Map",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
+            Text(
+                text = "추천 약속장소...",
+                fontSize = 18.sp,
+                color = Color.Gray,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
+            Text(
+                text = bestStation.toString(),
+                fontSize = 48.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 각 출발지 소요 시간 표시
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                inputFields.forEachIndexed { index, field ->
+                    val time = timesFromStartStations.getOrNull(index) ?: 0
+                    Text(
+                        text = "출발지: $field, 소요시간: ${formatTime(time)}",
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Center, // 출발지 텍스트 왼쪽 정렬
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
         }
 
     }

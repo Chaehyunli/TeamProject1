@@ -1,6 +1,5 @@
 package com.example.myapplication.ui.screens
 
-// 약속장소 찾기 버튼 누를 시에 기능 호출하게 하는 거 구현해야함.
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,7 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-    import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
@@ -21,13 +20,19 @@ import com.example.myapplication.ui.components.BottomNavigationBar // 하단 아
 import com.example.myapplication.ui.components.RouteInputField
 import com.example.myapplication.ui.components.WarningDialog
 
+data class MeetingPlaceResult(
+    val bestStation: Int,
+    val timesFromStartStations: List<Int>
+)
+
+
 @Composable
 fun MeetingPlaceScreen(navController: NavHostController) {
-    val focusManager = LocalFocusManager.current // focusManager 선언
-    var selectedItem by remember { mutableStateOf(1) } // 현재 선택된 BottomNavigation 아이템 (약속장소 추천)
+    val focusManager = LocalFocusManager.current
+    var selectedItem by remember { mutableStateOf(1) }
     var showAlertDialog by remember { mutableStateOf(false) }
     var invalidStationAlert by remember { mutableStateOf(false) }
-    var inputFields = remember { mutableStateListOf("", "") } // 각 필드의 텍스트 값을 저장하는 리스트
+    var inputFields = remember { mutableStateListOf("", "") }
 
     Column(
         modifier = Modifier
@@ -35,12 +40,11 @@ fun MeetingPlaceScreen(navController: NavHostController) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 내용 부분 (상단에 배치)
         Column(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .clickable { focusManager.clearFocus() }, // 필드 외부를 클릭하면 포커스 해제
+                .clickable { focusManager.clearFocus() },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(16.dp))
@@ -69,7 +73,7 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                         if (inputFields.size < 4) {
                             inputFields.add("")
                         }
-                        focusManager.clearFocus() // 버튼 클릭 시 포커스 해제
+                        focusManager.clearFocus()
                     }
                     .padding(8.dp)
             )
@@ -78,26 +82,27 @@ fun MeetingPlaceScreen(navController: NavHostController) {
 
             Button(
                 onClick = {
-                    // 입력 필드가 모두 비어있지 않은지 확인
                     if (inputFields.any { it.isBlank() }) {
                         showAlertDialog = true
-                        focusManager.clearFocus() // 버튼 클릭 시 포커스 해제
+                        focusManager.clearFocus()
                     } else if (inputFields.any { field ->
                             val stationNumber = field.toIntOrNull()
                             stationNumber == null || SubwayGraphInstance.subwayGraph.getNeighbors(stationNumber) == null
-                        }){
-                        // 유효하지 않은 역 번호가 있는 경우 경고 표시
+                        }) {
                         invalidStationAlert = true
+                    } else {
+                        SubwayGraphInstance.calculateMeetingPlaceRoute(inputFields)?.let { result ->
+                            val meetingPlaceResult = MeetingPlaceResult(
+                                bestStation = result.bestStation,
+                                timesFromStartStations = result.timesFromStartStations
+                            )
 
-                    }else{
-                        // 약속 장소 찾기 기능은 MeetingPlaceScreen에서 호출하여 데이터 준비
-                        // 이렇게 하면 MeetingPlaceResultScreen은 데이터 준비에 신경 쓰지 않고, 결과를 보여주는 역할만 담당
-                        val result = SubwayGraphInstance.calculateMeetingPlaceRoute(inputFields)
-                        // result에 약속 장소 기능 결과 저장 -> result.bestStation // result.timesFromStartStations: List<Int> 이런 식으로
-                        // 여기서 약속 장소 찾기 기능 호출
-                        // 예시 출력 -> result : MeetingPlaceResult(bestStation=303, timesFromStartStations=[1200, 1130, 1630, 1330])
-                        //navController.navigate("meeting_place_result") // 화면 전환
-                        focusManager.clearFocus() // 버튼 클릭 시 포커스 해제
+                            val resultString = "${meetingPlaceResult.bestStation},${meetingPlaceResult.timesFromStartStations.joinToString(",")}"
+                            val inputFieldsString = inputFields.joinToString(",")
+
+                            navController.navigate("meeting_place_result/$resultString/$inputFieldsString")
+                            focusManager.clearFocus()
+                        }
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF242F42)),
@@ -111,7 +116,6 @@ fun MeetingPlaceScreen(navController: NavHostController) {
             }
         }
 
-        // 경고문 출력 (출발지 다 입력되지 않았을 때)
         if (showAlertDialog) {
             WarningDialog(
                 message = "※ 출발지를 입력하세요.",
@@ -119,7 +123,6 @@ fun MeetingPlaceScreen(navController: NavHostController) {
             )
         }
 
-        // 유효하지 않은 역 경고문 출력
         if (invalidStationAlert) {
             WarningDialog(
                 message = "※ 지하철 역이 유효하지 않습니다.",
@@ -127,14 +130,13 @@ fun MeetingPlaceScreen(navController: NavHostController) {
             )
         }
 
-        // BottomNavigationBar는 하단에 위치
         BottomNavigationBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(62.dp),
             selectedItem = selectedItem,
-            onItemSelected = { item -> selectedItem = item }, // 아이템 선택 시 selectedItem 업데이트
-            navController = navController // navController 전달
+            onItemSelected = { item -> selectedItem = item },
+            navController = navController
         )
     }
 }
