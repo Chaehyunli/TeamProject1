@@ -90,6 +90,7 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                         focusManager.clearFocus() // 버튼 클릭 시 포커스 해제
                     } else if (inputFields.any { field ->
                             val stationNumber = field.toIntOrNull()
+                            SubwayGraphInstance.subwayGraph
                             stationNumber == null || SubwayGraphInstance.subwayGraph.getNeighbors(stationNumber) == null
                         }){
                         // 유효하지 않은 역 번호가 있는 경우 경고 표시
@@ -100,7 +101,6 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                                 bestStation = result.bestStation,
                                 timesFromStartStations = result.timesFromStartStations
                             )
-
                             val resultString = "${meetingPlaceResult.bestStation},${meetingPlaceResult.timesFromStartStations.joinToString(",")}"
                             val inputFieldsString = inputFields.joinToString(",")
 
