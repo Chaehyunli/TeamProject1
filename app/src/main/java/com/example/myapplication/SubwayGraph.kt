@@ -304,7 +304,6 @@ object SubwayGraphInstance {
     )
 
     // 출발역들에서 최소 시간 기준으로 중앙에 가까운 최적의 만날 지하철 역 계산
-    // 출발역들에서 최소 시간 기준으로 중앙에 가까운 최적의 만날 지하철 역 계산
     fun calculateMeetingPlaceRoute(startStations: List<String>): MeetingPlaceResult? {
         val stationNumbers = startStations.mapNotNull { it.toIntOrNull() }
         if (stationNumbers.isEmpty()) return null
@@ -428,6 +427,7 @@ fun main() {
 
      */
 
-    println(SubwayGraphInstance.calculateMeetingPlaceRoute(listOf("601", "101", "209", "102")))
+    val result = SubwayGraphInstance.calculateMeetingPlaceRoute(listOf("601", "101", "209", "102"))
+    println(result)
 
 }

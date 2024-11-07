@@ -96,7 +96,7 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                         // result에 약속 장소 기능 결과 저장 -> result.bestStation // result.timesFromStartStations: List<Int> 이런 식으로
                         // 여기서 약속 장소 찾기 기능 호출
                         // 예시 출력 -> result : MeetingPlaceResult(bestStation=303, timesFromStartStations=[1200, 1130, 1630, 1330])
-                        //navController.navigate("meeting_place_result") // 화면 전환
+                        navController.navigate("meeting_place_result") // 화면 전환
                         focusManager.clearFocus() // 버튼 클릭 시 포커스 해제
                     }
                 },
