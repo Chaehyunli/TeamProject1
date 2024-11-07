@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.input.ImeAction
 
 
-@OptIn(ExperimentalMaterial3Api::class) // 이거 실험 버전 경고 뜨는 거 무시허는 구문, 앱 실행에는 아무런 문제 없음.
+@OptIn(ExperimentalMaterial3Api::class) // 이거 실험 버전 경고 뜨는 거 무시하는 구문, 앱 실행에는 아무런 문제 없음.
 @Composable
 fun RouteInputField(
     label: String,

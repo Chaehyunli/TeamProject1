@@ -1,7 +1,9 @@
+//하단 네비게이션 바
 package com.example.myapplication.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -24,7 +26,7 @@ fun BottomNavigationBar(
     NavigationBar(
         containerColor = Color(0xFFFFFFFF),
         modifier = modifier
-            .shadow(4.dp),
+            .shadow(16.dp, shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
         contentColor = Color(0xFF808590)
     ) {
         val items = listOf(
