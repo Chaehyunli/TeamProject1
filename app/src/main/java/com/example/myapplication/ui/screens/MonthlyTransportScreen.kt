@@ -28,10 +28,11 @@ fun MonthlyTransportScreen(navController: NavHostController) {
         BottomNavigationBar(
             modifier = Modifier
                 .fillMaxWidth()
+                .align(Alignment.BottomCenter)
                 .height(62.dp),
             selectedItem = selectedItem,
-            onItemSelected = { selectedItem = it }, // 아이템 선택 시 selectedItem 업데이트
-            navController = navController // navController 전달
+            onItemSelected = { selectedItem = it },
+            navController = navController
         )
     }
 }
