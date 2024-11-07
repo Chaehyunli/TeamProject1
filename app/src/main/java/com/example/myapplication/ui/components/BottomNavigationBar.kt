@@ -1,12 +1,15 @@
+//하단 네비게이션 바
 package com.example.myapplication.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -22,7 +25,8 @@ fun BottomNavigationBar(
 ) {
     NavigationBar(
         containerColor = Color(0xFFFFFFFF),
-        modifier = modifier,
+        modifier = modifier
+            .shadow(16.dp, shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
         contentColor = Color(0xFF808590)
     ) {
         val items = listOf(

@@ -14,6 +14,27 @@ fun AppNavHost(navController: NavHostController) {
         composable(Screen.MonthlyTransport.route) { MonthlyTransportScreen(navController) }
         composable(Screen.Settings.route) { SettingsScreen(navController) }
 
-        composable(Screen.MeetingPlaceResult.route) { MeetingPlaceResultScreen(navController) }
+        // result와 inputFields 전달
+        composable("meeting_place_result/{result}/{inputFields}") { backStackEntry ->
+            val resultString = backStackEntry.arguments?.getString("result")
+            val inputFieldsString = backStackEntry.arguments?.getString("inputFields")
+
+            if (resultString != null && inputFieldsString != null) {
+                // resultString을 파싱하여 MeetingPlaceResult 객체 생성
+                val resultParts = resultString.split(",")
+                val bestStation = resultParts[0].toInt()
+                val timesFromStartStations = resultParts.drop(1).map { it.toInt() }
+
+                val meetingPlaceResult = MeetingPlaceResult(
+                    bestStation = bestStation,
+                    timesFromStartStations = timesFromStartStations
+                )
+
+                // inputFieldsString을 파싱하여 출발지 목록 생성
+                val inputFields = inputFieldsString.split(",")
+
+                MeetingPlaceResultScreen(navController, meetingPlaceResult, inputFields)
+            }
+        }
     }
 }

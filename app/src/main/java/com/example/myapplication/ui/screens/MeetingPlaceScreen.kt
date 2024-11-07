@@ -21,6 +21,12 @@ import com.example.myapplication.ui.components.BottomNavigationBar // 하단 아
 import com.example.myapplication.ui.components.RouteInputField
 import com.example.myapplication.ui.components.WarningDialog
 
+data class MeetingPlaceResult(
+    val bestStation: Int,
+    val timesFromStartStations: List<Int>
+)
+
+
 @Composable
 fun MeetingPlaceScreen(navController: NavHostController) {
     val focusManager = LocalFocusManager.current // focusManager 선언
@@ -69,7 +75,7 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                         if (inputFields.size < 4) {
                             inputFields.add("")
                         }
-                        focusManager.clearFocus() // 버튼 클릭 시 포커스 해제
+                        focusManager.clearFocus()
                     }
                     .padding(8.dp)
             )
@@ -88,16 +94,19 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                         }){
                         // 유효하지 않은 역 번호가 있는 경우 경고 표시
                         invalidStationAlert = true
+                    } else {
+                        SubwayGraphInstance.calculateMeetingPlaceRoute(inputFields)?.let { result ->
+                            val meetingPlaceResult = MeetingPlaceResult(
+                                bestStation = result.bestStation,
+                                timesFromStartStations = result.timesFromStartStations
+                            )
 
-                    }else{
-                        // 약속 장소 찾기 기능은 MeetingPlaceScreen에서 호출하여 데이터 준비
-                        // 이렇게 하면 MeetingPlaceResultScreen은 데이터 준비에 신경 쓰지 않고, 결과를 보여주는 역할만 담당
-                        val result = SubwayGraphInstance.calculateMeetingPlaceRoute(inputFields)
-                        // result에 약속 장소 기능 결과 저장 -> result.bestStation // result.timesFromStartStations: List<Int> 이런 식으로
-                        // 여기서 약속 장소 찾기 기능 호출
-                        // 예시 출력 -> result : MeetingPlaceResult(bestStation=303, timesFromStartStations=[1200, 1130, 1630, 1330])
-                        navController.navigate("meeting_place_result") // 화면 전환
-                        focusManager.clearFocus() // 버튼 클릭 시 포커스 해제
+                            val resultString = "${meetingPlaceResult.bestStation},${meetingPlaceResult.timesFromStartStations.joinToString(",")}"
+                            val inputFieldsString = inputFields.joinToString(",")
+
+                            navController.navigate("meeting_place_result/$resultString/$inputFieldsString")
+                            focusManager.clearFocus()
+                        }
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF242F42)),
