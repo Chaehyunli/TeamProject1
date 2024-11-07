@@ -428,6 +428,6 @@ fun main() {
 
      */
 
-    println(SubwayGraphInstance.calculateMeetingPlaceRoute(listOf("601", "101", "209", "102")))
-
+    //println(SubwayGraphInstance.calculateMeetingPlaceRoute(listOf("601", "101", "209", "102")))
+    println(SubwayGraphInstance.calculateMeetingPlaceRoute(listOf("303", "506", "101")))
 }

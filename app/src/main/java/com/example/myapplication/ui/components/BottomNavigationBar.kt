@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -22,7 +23,8 @@ fun BottomNavigationBar(
 ) {
     NavigationBar(
         containerColor = Color(0xFFFFFFFF),
-        modifier = modifier,
+        modifier = modifier
+            .shadow(4.dp),
         contentColor = Color(0xFF808590)
     ) {
         val items = listOf(
