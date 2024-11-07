@@ -1,6 +1,5 @@
+// RouteInputField,kt
 package com.example.myapplication.ui.components
-// 입력 필드 아무곳이나 재사용 가능
-
 // 지금 한글 입력 자음에서 마우스 꾹 누른 상태로 모음으로 가야 입력되는 상태
 // 한글 키보드 나오게 하는법은 안드로이드 폰 설정에 들어가서 Languages & input 한국어 추가
 // 코딩으로 한글하고 숫자만 입력하게 해놓음. 영어 안쳐짐(우리 앱에서만)

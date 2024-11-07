@@ -1,3 +1,4 @@
+// MeetingPlaceResultScreen.kt
 package com.example.myapplication.ui.screens
 
 import androidx.compose.foundation.background
@@ -15,6 +16,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+
 import com.example.myapplication.ui.components.BottomNavigationBar
 
 // MeetingPlaceResultScreen.kt
@@ -63,7 +67,7 @@ fun MeetingPlaceResultScreen(
                     .fillMaxWidth()
                     .height(62.dp),
                 selectedItem = selectedItem,
-                onItemSelected = { item -> selectedItem = item },
+                onItemSelected = { selectedItem = it },
                 navController = navController
             )
         }

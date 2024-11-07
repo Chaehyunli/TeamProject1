@@ -26,7 +26,6 @@ data class MeetingPlaceResult(
     val timesFromStartStations: List<Int>
 )
 
-
 @Composable
 fun MeetingPlaceScreen(navController: NavHostController) {
     val focusManager = LocalFocusManager.current // focusManager 선언
@@ -67,58 +66,56 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            Text(
-                text = "사람 추가하기",
-                color = Color(0xFF707070),
-                modifier = Modifier
-                    .clickable {
-                        if (inputFields.size < 4) {
-                            inputFields.add("")
+                Text(
+                    text = "사람 추가하기",
+                    color = Color(0xFF707070),
+                    modifier = Modifier
+                        .clickable {
+                            if (inputFields.size < 4) {
+                                inputFields.add("")
+                            }
+                            focusManager.clearFocus()
                         }
-                        focusManager.clearFocus()
-                    }
-                    .padding(8.dp)
-            )
+                        .padding(8.dp)
+                )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Button(
-                onClick = {
-                    // 입력 필드가 모두 비어있지 않은지 확인
-                    if (inputFields.any { it.isBlank() }) {
-                        showAlertDialog = true
-                        focusManager.clearFocus() // 버튼 클릭 시 포커스 해제
-                    } else if (inputFields.any { field ->
-                            val stationNumber = field.toIntOrNull()
-                            SubwayGraphInstance.subwayGraph
-                            stationNumber == null || SubwayGraphInstance.subwayGraph.getNeighbors(stationNumber) == null
-                        }){
-                        // 유효하지 않은 역 번호가 있는 경우 경고 표시
-                        invalidStationAlert = true
-                    } else {
-                        SubwayGraphInstance.calculateMeetingPlaceRoute(inputFields)?.let { result ->
-                            val meetingPlaceResult = MeetingPlaceResult(
-                                bestStation = result.bestStation,
-                                timesFromStartStations = result.timesFromStartStations
-                            )
-                            val resultString = "${meetingPlaceResult.bestStation},${meetingPlaceResult.timesFromStartStations.joinToString(",")}"
-                            val inputFieldsString = inputFields.joinToString(",")
-
-                            navController.navigate("meeting_place_result/$resultString/$inputFieldsString")
+                Button(
+                    onClick = {
+                        if (inputFields.any { it.isBlank() }) {
+                            showAlertDialog = true
                             focusManager.clearFocus()
+                        } else if (inputFields.any { field ->
+                                val stationNumber = field.toIntOrNull()
+                                stationNumber == null || SubwayGraphInstance.subwayGraph.getNeighbors(stationNumber) == null
+                            }) {
+                            invalidStationAlert = true
+                        } else {
+                            SubwayGraphInstance.calculateMeetingPlaceRoute(inputFields)?.let { result ->
+                                val meetingPlaceResult = MeetingPlaceResult(
+                                    bestStation = result.bestStation,
+                                    timesFromStartStations = result.timesFromStartStations
+                                )
+
+                                val resultString = "${meetingPlaceResult.bestStation},${meetingPlaceResult.timesFromStartStations.joinToString(",")}"
+                                val inputFieldsString = inputFields.joinToString(",")
+
+                                navController.navigate("meeting_place_result/$resultString/$inputFieldsString")
+                                focusManager.clearFocus()
+                            }
                         }
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF242F42)),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text(
-                    text = "약속장소 찾기",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF242F42)),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text(
+                        text = "약속장소 찾기",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
-        }
 
         // 경고문 출력 (출발지 다 입력되지 않았을 때)
         if (showAlertDialog) {
