@@ -1,7 +1,7 @@
 package com.example.myapplication
 
+import android.content.Context
 import kotlin.String
-import java.io.File
 
 //import com.example.myapplication.RouteFinder
 //import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
@@ -75,29 +75,29 @@ class SubwayGraph {
         println("전체 역의 개수: ${stations.size}")
     }
 
-    fun loadDataDirectly(graph: SubwayGraph) {
-        //상대 경로로 stations.txt 파일을 받아옴
-        val filePath = "app\\src\\main\\resources\\stationns.txt"
-        val file = File(filePath)
-        println("파일 경로: ${file.absolutePath}")
-        if (file.exists()) {
+    // AssetManager를 이용해 파일을 로드하는 메소드
+    fun loadDataFromAssets(context: Context) {
+        try {
+            val inputStream = context.assets.open("stationns.txt")
+            inputStream.bufferedReader().useLines { lines ->
+                lines.forEach { line ->
+                    println("읽은 줄: $line")
+                    if (line.startsWith("src")) return@forEach // 첫 줄(헤더)은 건너뜀
 
-            file.forEachLine { line ->
-                // 첫 줄(헤더)은 건너뜁니다.
-                if (line.startsWith("src")) return@forEachLine
+                    val row = line.split(",")
+                    val src = row.getOrNull(0)?.toIntOrNull() ?: return@forEach
+                    val dst = row.getOrNull(1)?.toIntOrNull() ?: return@forEach
+                    val time = row.getOrNull(2)?.toIntOrNull() ?: return@forEach
+                    val distance = row.getOrNull(3)?.toIntOrNull() ?: return@forEach
+                    val cost = row.getOrNull(4)?.toIntOrNull() ?: return@forEach
+                    val line = row.getOrNull(5)?.toIntOrNull() ?: return@forEach
 
-                val row = line.split(",")
-                val src = row.getOrNull(0)?.toIntOrNull() ?: return@forEachLine
-                val dst = row.getOrNull(1)?.toIntOrNull() ?: return@forEachLine
-                val time = row.getOrNull(2)?.toIntOrNull() ?: return@forEachLine
-                val distance = row.getOrNull(3)?.toIntOrNull() ?: return@forEachLine
-                val cost = row.getOrNull(4)?.toIntOrNull() ?: return@forEachLine
-                val line = row.getOrNull(5)?.toIntOrNull() ?: return@forEachLine
-
-                graph.addConnection(src, dst, distance, cost, time, line)
+                    addConnection(src, dst, distance, cost, time, line)
+                }
             }
-        } else {
-            println("stations.txt 파일을 찾을 수 없습니다.")
+            println("데이터가 성공적으로 로드되었습니다.")
+        } catch (e: Exception) {
+            println("파일을 읽는 중 오류 발생: ${e.message}")
         }
     }
 
@@ -111,13 +111,20 @@ class SubwayGraph {
 
 // 나머지 SubwayGraph 클래스 내용 유지 -> SubwayGraphInstance.subwayGraph 객체로 지하철 노드 접근
 object SubwayGraphInstance {
-    val subwayGraph: SubwayGraph by lazy {
-        SubwayGraph().apply {
-            loadDataDirectly(this)
-        }
-    }
+    private var _subwayGraph: SubwayGraph? = null
 
-    private val routeFinder = RouteFinder(subwayGraph)
+    val subwayGraph: SubwayGraph
+        get() = _subwayGraph ?: throw IllegalStateException("SubwayGraph has not been initialized. Call initialize() first.")
+
+    private val routeFinder: RouteFinder by lazy { RouteFinder(subwayGraph) }
+
+    // initialize 메서드에서 subwayGraph를 초기화
+    fun initialize(context: Context) {
+        _subwayGraph = SubwayGraph().apply {
+            loadDataFromAssets(context)
+        }
+        println("SubwayGraph 데이터가 성공적으로 초기화되었습니다.")
+    }
 
     // 개별 경로에 접근할 수 있는 getter 함수 추가
     fun getShortestTimeRoute(startStation: Int, endStation: Int): RouteFinder.RouteInfo? {
@@ -219,7 +226,7 @@ fun main() {
     val subwayGraph = SubwayGraph()
 
     // 데이터 직접 로드
-    subwayGraph.loadDataDirectly(subwayGraph)
+    //subwayGraph.loadDataDirectly(subwayGraph)
 
     // 그래프 출력
     //subwayGraph.printTotalStations()
@@ -301,5 +308,4 @@ fun main() {
 
     val result = SubwayGraphInstance.calculateMeetingPlaceRoute(listOf("601", "101", "209", "102"))
     println(result)
-
 }

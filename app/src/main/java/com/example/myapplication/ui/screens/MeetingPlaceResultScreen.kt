@@ -64,7 +64,6 @@ fun MeetingPlaceResultScreen(
             BottomNavigationBar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
                     .height(62.dp),
                 selectedItem = selectedItem,
                 onItemSelected = { selectedItem = it },

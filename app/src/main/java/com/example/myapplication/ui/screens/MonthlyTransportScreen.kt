@@ -28,7 +28,6 @@ fun MonthlyTransportScreen(navController: NavHostController) {
         BottomNavigationBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
                 .height(62.dp),
             selectedItem = selectedItem,
             onItemSelected = { selectedItem = it },
