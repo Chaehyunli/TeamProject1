@@ -77,5 +77,6 @@ fun MeetingPlaceResultScreen(navController: NavHostController) {
                 modifier = Modifier.fillMaxSize()
             )
         }
+
     }
 }

@@ -95,7 +95,9 @@ fun HomeScreen(navController: NavHostController) {
                 value = searchText,
                 onValueChange = { searchText = it },
                 focusManager = focusManager,
-                onSearchClick = { /* 검색 로직 구현 */ },
+                onSearchClick = { /* 검색 로직 구현 */
+                    navController.navigate("stationDetail")
+                                },
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
