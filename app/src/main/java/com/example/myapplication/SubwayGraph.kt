@@ -227,7 +227,7 @@ fun main() {
     val subwayGraph = SubwayGraph()
 
     // 데이터 직접 로드
-    //subwayGraph.loadDataDirectly(subwayGraph)
+    //SubwayGraphInstance.initialize(this)
 
     // 그래프 출력
     //subwayGraph.printTotalStations()
