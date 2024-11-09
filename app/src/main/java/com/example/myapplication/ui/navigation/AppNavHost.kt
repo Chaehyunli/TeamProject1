@@ -15,7 +15,7 @@ fun AppNavHost(navController: NavHostController) {
         composable(Screen.MeetingPlace.route) { MeetingPlaceScreen(navController) }
         composable(Screen.MonthlyTransport.route) { MonthlyTransportScreen(navController) }
         composable(Screen.Settings.route) { SettingsScreen(navController) }
-        composable("main") { MainScreen(onBack = { navController.popBackStack() }) }
+        composable("routeSearch") { RouteSearchScreen(onBack = { navController.popBackStack() }) }
 
         // result와 inputFields 전달
         composable("meeting_place_result/{result}/{inputFields}") { backStackEntry ->

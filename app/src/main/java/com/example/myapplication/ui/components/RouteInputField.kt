@@ -39,7 +39,6 @@ fun RouteInputField(
     Row( // 입력 필드 전체(Row)에 대한 외부 스타일을 지정
         modifier = Modifier
             .fillMaxWidth() // 입력 필드를 화면의 전체 너비로 채우도록
-            .shadow(4.dp, shape = RoundedCornerShape(8.dp)) // 입력 필드에 그림자 효과를 주고 모서리를 둥글게
             .background(Color.White, RoundedCornerShape(8.dp)) // 배경색을 흰색으로 설정하고 모서리를 둥글게
             .padding(horizontal = 8.dp), // 양쪽 여백 추가, 양쪽 끝에서 텍스트 필드와 삭제 버튼 사이에 약간의 간격 만듦
         verticalAlignment = Alignment.CenterVertically
