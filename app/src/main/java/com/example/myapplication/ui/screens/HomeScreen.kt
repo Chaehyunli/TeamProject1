@@ -54,7 +54,7 @@ fun HomeScreen(navController: NavHostController) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 72.dp)
+                .padding(bottom = 0.dp)
                 .pointerInput(Unit) {
                     detectTransformGestures { _, pan, zoom, _ ->
                         // 확대/축소 범위 제한 (1f에서 3f 사이)
@@ -104,7 +104,9 @@ fun HomeScreen(navController: NavHostController) {
             // 길찾기 버튼
             // 길찾기 버튼 (아이콘 아래에 텍스트 추가)
             IconButton(
-                onClick = { /* 길찾기 기능 구현 */ },
+                onClick = { /* 길찾기 기능 구현 */
+                    navController.navigate("routeSearch")
+                },
                 modifier = Modifier
                     .size(48.dp)
                     .padding(start = 8.dp)
