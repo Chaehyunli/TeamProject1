@@ -35,17 +35,16 @@ fun HomeScreen(navController: NavHostController) {
     val focusManager = LocalFocusManager.current
 
     // 초기 확대 및 위치 설정
-    var scale by remember { mutableStateOf(2f) } // 초기 scale 값을 2f로 설정하여 하얀 배경이 보이지 않도록 함
+    var scale by remember { mutableStateOf(2f) }
     var offsetX by remember { mutableStateOf(0f) }
     var offsetY by remember { mutableStateOf(0f) }
 
     // 이미지 크기와 스크롤 한계 설정
-    val imageWidth = 1000f // 이미지 가로 크기 (예시 값, 실제 이미지 크기에 맞게 조정 필요)
-    val imageHeight = 1000f // 이미지 세로 크기 (예시 값, 실제 이미지 크기에 맞게 조정 필요)
-    val screenWidth = 500f  // 스크린 가로 크기 (예시 값, 실제 디바이스 크기에 맞게 조정 필요)
-    val screenHeight = 800f // 스크린 세로 크기 (예시 값, 실제 디바이스 크기에 맞게 조정 필요)
+    val imageWidth = 1000f
+    val imageHeight = 1000f
+    val screenWidth = 500f
+    val screenHeight = 800f
 
-    // 확대/축소에 따른 스크롤 범위 동적 계산
     val maxOffsetX = (imageWidth * scale - screenWidth) / 2
     val maxOffsetY = (imageHeight * scale - screenHeight) / 2
 
@@ -57,10 +56,7 @@ fun HomeScreen(navController: NavHostController) {
                 .padding(bottom = 0.dp)
                 .pointerInput(Unit) {
                     detectTransformGestures { _, pan, zoom, _ ->
-                        // 확대/축소 범위 제한 (1f에서 3f 사이)
                         scale = (scale * zoom).coerceIn(1f, 3f)
-
-                        // 스크롤 범위 제한
                         val newOffsetX = offsetX + pan.x * scale
                         val newOffsetY = offsetY + pan.y * scale
                         offsetX = newOffsetX.coerceIn(-maxOffsetX, maxOffsetX)
@@ -75,7 +71,7 @@ fun HomeScreen(navController: NavHostController) {
                 )
         ) {
             Image(
-                painter = painterResource(id = R.drawable.map_image), // 노선도 이미지 리소스
+                painter = painterResource(id = R.drawable.map_image),
                 contentDescription = "지하철 노선도",
                 modifier = Modifier.fillMaxSize()
             )
@@ -95,16 +91,16 @@ fun HomeScreen(navController: NavHostController) {
                 value = searchText,
                 onValueChange = { searchText = it },
                 focusManager = focusManager,
-                onSearchClick = { /* 검색 로직 구현 */
-                    navController.navigate("stationDetail")
-                                },
+                onSearchClick = {
+                    // 검색 버튼 클릭 시 입력한 텍스트(역 번호)로 StationDetailScreen으로 이동
+                    navController.navigate("stationDetail/$searchText")
+                },
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
             // 길찾기 버튼
-            // 길찾기 버튼 (아이콘 아래에 텍스트 추가)
             IconButton(
-                onClick = { /* 길찾기 기능 구현 */
+                onClick = {
                     navController.navigate("routeSearch")
                 },
                 modifier = Modifier
@@ -126,12 +122,10 @@ fun HomeScreen(navController: NavHostController) {
                         text = "길찾기",
                         color = Color.White,
                         fontSize = 8.5.sp,
-                        modifier = Modifier.offset(y = -5.dp) // 텍스트를 위로 이동하여 간격 조정
+                        modifier = Modifier.offset(y = -5.dp)
                     )
                 }
             }
-
-
         }
 
         // 하단 네비게이션 바

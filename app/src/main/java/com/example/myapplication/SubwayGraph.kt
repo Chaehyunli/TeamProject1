@@ -45,7 +45,7 @@ data class Edge(
 
 // SubwayGraph 클래스 정의: 역을 관리하고 그래프 구축
 class SubwayGraph {
-    private val stations = mutableMapOf<Int, Node>() // 전체 역을 저장할 맵
+    val stations = mutableMapOf<Int, Node>() // 전체 역을 저장할 맵
 
     fun getAllStationNumbers(): List<Int> {
         return stations.keys.toList()
@@ -307,7 +307,7 @@ fun main() {
 
      */
 
-    val result = SubwayGraphInstance.calculateMeetingPlaceRoute(listOf("601", "101", "209", "102"))
-    println(result)
+    //val result = SubwayGraphInstance.calculateMeetingPlaceRoute(listOf("601", "101", "209", "102"))
+    //println(result)
 
 }

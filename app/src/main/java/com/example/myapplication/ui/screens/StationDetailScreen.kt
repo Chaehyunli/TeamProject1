@@ -4,7 +4,6 @@ package com.example.myapplication.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -22,7 +21,8 @@ import com.example.myapplication.ui.components.StationDetailDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.unit.IntOffset
+import com.example.myapplication.Edge
+import com.example.myapplication.SubwayGraphInstance
 import kotlin.math.roundToInt
 import kotlin.math.max
 import kotlin.math.min
@@ -30,6 +30,34 @@ import kotlin.math.min
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StationDetailScreen(stationName: String, onBack: () -> Unit) {
+    // stationName을 Int로 변환하여 SubwayGraphInstance에서 역 번호 가져오기
+    val stationNumber = stationName.toIntOrNull()
+
+    // SubwayGraphInstance에서 해당 역 번호에 대한 정보를 개별적으로 가져오기
+    val stationData = stationNumber?.let { SubwayGraphInstance.subwayGraph.stations[it] }
+    val lineNumbers = stationData?.lineNumbers
+    val neighbors = stationData?.neighbors
+    val hasTransfer = lineNumbers?.size?.let { it > 1 } ?: false
+
+    // stationNameDisplay 구성
+    val stationNameDisplay = if (lineNumbers != null && lineNumbers.isNotEmpty()) {
+        "${lineNumbers.first()}호선 ${stationNumber}역" // 예: "9호선 903역"
+    } else {
+        "역 정보 없음"
+    }
+
+    // transferInfo 구성
+    val transferInfo = if (hasTransfer) {
+        "환승 가능한 역입니다."
+    } else {
+        "환승할 수 없는 역입니다."
+    }
+
+    // transferDetailInfo 구성
+    val transferDetailInfo = neighbors?.joinToString("\n") { edge ->
+        "${edge.destination}역 방면 | ${if (lineNumbers?.contains(edge.line) == true) "환승 가능" else "환승 불가"}"
+    } ?: "해당 역에 대한 추가 정보가 없습니다."
+
     // 초기 확대 및 위치 설정
     var scale by remember { mutableStateOf(2f) } // 초기 scale 값을 2f로 설정하여 하얀 배경이 보이지 않도록 함
     var offsetX by remember { mutableStateOf(0f) }
@@ -49,7 +77,7 @@ fun StationDetailScreen(stationName: String, onBack: () -> Unit) {
         // 상단 역 설명 바
         topBar = {
             TopAppBar(
-                title = { Text(text = stationName, fontSize = 18.sp, color = Color(0xFF252f42)) },
+                title = { Text(text = stationNameDisplay, fontSize = 18.sp, color = Color(0xFF252f42)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "뒤로가기")
@@ -95,11 +123,14 @@ fun StationDetailScreen(stationName: String, onBack: () -> Unit) {
 
                 // 하단 정보 카드 (화면 하단에 고정)
                 StationDetailDialog(
-                    stationName = "9호선 903역",
-                    transferInfo = "환승할 수 없는 역입니다.",
-                    transferDetailInfo = "119역 방면 | 환승 가능\n702역 방면 | 환승 가능\n(종착역이면 종착역입니다.)"
+                    stationName = stationNameDisplay,
+                    transferInfo = transferInfo,
+                    transferDetailInfo = transferDetailInfo
                 )
             }
         }
     )
 }
+
+
+
