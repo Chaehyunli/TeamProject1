@@ -17,8 +17,11 @@ import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
 
 @Composable
-fun SortButton() {
+fun SortButton(
+    onSortCriteriaSelected: (String) -> Unit // 정렬 기준 선택 시 RouteSearchScreen으로 콜백
+) {
     var expanded by remember { mutableStateOf(false) }
+    var selectedSortCriteria by remember { mutableStateOf("최단 거리 순") }
 
     Box(
         modifier = Modifier
@@ -33,8 +36,8 @@ fun SortButton() {
             border = BorderStroke(0.7.dp, Color(0xFF252f42)),
             contentPadding = PaddingValues(horizontal = 12.dp),
             modifier = Modifier
-                .width(160.dp) // 버튼의 가로 길이를 160dp로 설정
-                .height(40.dp) // 버튼의 높이를 40dp로 설정
+                .width(160.dp)
+                .height(40.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -51,9 +54,9 @@ fun SortButton() {
                         .align(Alignment.CenterVertically)
                 )
 
-                // 텍스트
+                // 선택된 정렬 기준 표시
                 Text(
-                    text = "최단 거리 순",
+                    text = selectedSortCriteria,
                     fontSize = 12.sp,
                     color = Color(0xFF252F42),
                     modifier = Modifier.align(Alignment.CenterVertically)
@@ -61,7 +64,7 @@ fun SortButton() {
             }
         }
 
-        // DropdownMenu가 Sort 버튼과 겹치도록 위치 설정
+        // DropdownMenu 설정
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
@@ -70,14 +73,18 @@ fun SortButton() {
                 .height(140.dp)
                 .border(BorderStroke(0.7.dp, Color(0xFF252f42)), shape = RoundedCornerShape(16.dp))
                 .padding(0.dp),
-            offset = DpOffset(x = 0.dp, y = (-40).dp), // 메뉴와 버튼이 겹치도록 offset 설정
+            offset = DpOffset(x = 0.dp, y = (-40).dp)
         ) {
             val menuItems = listOf("최단 거리 순", "최소 시간 순", "최소 비용 순", "최소 환승 순")
 
             Column {
                 menuItems.forEachIndexed { index, text ->
                     DropdownMenuItem(
-                        onClick = { /* 각 메뉴 항목의 클릭 동작 */ },
+                        onClick = {
+                            selectedSortCriteria = text
+                            expanded = false
+                            onSortCriteriaSelected(text) // 선택된 기준을 RouteSearchScreen에 전달
+                        },
                         text = {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
@@ -89,8 +96,7 @@ fun SortButton() {
                                     painter = painterResource(id = if (index == 0) R.drawable.ic_arrow_down else R.drawable.ic_dot),
                                     contentDescription = null,
                                     tint = Color(0xFF252F42),
-                                    modifier = Modifier
-                                        .size(12.dp)
+                                    modifier = Modifier.size(12.dp)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(text, fontSize = 12.sp, color = Color(0xFF252F42))
@@ -108,6 +114,6 @@ fun SortButton() {
                 }
             }
         }
-
     }
 }
+
