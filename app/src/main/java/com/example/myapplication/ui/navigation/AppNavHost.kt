@@ -10,9 +10,12 @@ import com.example.myapplication.ui.screens.*
 fun AppNavHost(navController: NavHostController) {
     NavHost(navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) { HomeScreen(navController) }
+        composable("home") { HomeScreen(navController) }
+        composable("stationDetail") { StationDetailScreen(stationName = "903역",onBack = { navController.popBackStack()} )}
         composable(Screen.MeetingPlace.route) { MeetingPlaceScreen(navController) }
         composable(Screen.MonthlyTransport.route) { MonthlyTransportScreen(navController) }
         composable(Screen.Settings.route) { SettingsScreen(navController) }
+        composable("routeSearch") { RouteSearchScreen(onBack = { navController.popBackStack() }) }
 
         // result와 inputFields 전달
         composable("meeting_place_result/{result}/{inputFields}") { backStackEntry ->

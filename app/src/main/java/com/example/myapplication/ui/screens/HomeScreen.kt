@@ -1,4 +1,3 @@
-// HomeScreen.kt
 package com.example.myapplication.ui.screens
 
 import androidx.compose.foundation.Image
@@ -25,6 +24,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.sp
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,100 +49,100 @@ fun HomeScreen(navController: NavHostController) {
     val maxOffsetX = (imageWidth * scale - screenWidth) / 2
     val maxOffsetY = (imageHeight * scale - screenHeight) / 2
 
-    Scaffold(
-        containerColor = Color.White,
-        bottomBar = {
-            BottomNavigationBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(62.dp),
-                selectedItem = selectedItem,
-                onItemSelected = { selectedItem = it },
-                navController = navController
-            )
-        }
-    ) { innerPadding ->
+    Box(modifier = Modifier.fillMaxSize()) {
+        // 확대, 축소 및 스크롤 가능한 이미지
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            // 확대, 축소 및 스크롤 가능한 이미지
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 72.dp)
-                    .pointerInput(Unit) {
-                        detectTransformGestures { _, pan, zoom, _ ->
-                            // 확대/축소 범위 제한 (1f에서 3f 사이)
-                            scale = (scale * zoom).coerceIn(1f, 3f)
+                .padding(bottom = 0.dp)
+                .pointerInput(Unit) {
+                    detectTransformGestures { _, pan, zoom, _ ->
+                        // 확대/축소 범위 제한 (1f에서 3f 사이)
+                        scale = (scale * zoom).coerceIn(1f, 3f)
 
-                            // 스크롤 범위 제한
-                            val newOffsetX = offsetX + pan.x * scale
-                            val newOffsetY = offsetY + pan.y * scale
-                            offsetX = newOffsetX.coerceIn(-maxOffsetX, maxOffsetX)
-                            offsetY = newOffsetY.coerceIn(-maxOffsetY, maxOffsetY)
-                        }
-                    }
-                    .graphicsLayer(
-                        scaleX = scale,
-                        scaleY = scale,
-                        translationX = offsetX,
-                        translationY = offsetY
-                    )
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.map_image), // 노선도 이미지 리소스
-                    contentDescription = "지하철 노선도",
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-
-            // 검색 바와 길찾기 버튼
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(72.dp)
-                    .padding(16.dp)
-                    .align(Alignment.TopCenter),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // 검색 바
-                StationInputField(
-                    value = searchText,
-                    onValueChange = { searchText = it },
-                    focusManager = focusManager,
-                    onSearchClick = { /* 검색 로직 구현 */ },
-                    modifier = Modifier.weight(1f)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                // 길찾기 버튼 (아이콘 아래에 텍스트 추가)
-                IconButton(
-                    onClick = { /* 길찾기 기능 구현 */ },
-                    modifier = Modifier
-                        .size(48.dp)
-                        .padding(start = 8.dp)
-                        .background(Color(0xFF252F42), shape = CircleShape)
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.NearMe,
-                            contentDescription = "길찾기",
-                            tint = Color.White,
-                            modifier = Modifier.size(23.dp)
-                        )
-                        Text(
-                            text = "길찾기",
-                            color = Color.White,
-                            fontSize = 8.5.sp,
-                            modifier = Modifier.offset(y = -5.dp) // 텍스트를 위로 이동하여 간격 조정
-                        )
+                        // 스크롤 범위 제한
+                        val newOffsetX = offsetX + pan.x * scale
+                        val newOffsetY = offsetY + pan.y * scale
+                        offsetX = newOffsetX.coerceIn(-maxOffsetX, maxOffsetX)
+                        offsetY = newOffsetY.coerceIn(-maxOffsetY, maxOffsetY)
                     }
                 }
-            }
+                .graphicsLayer(
+                    scaleX = scale,
+                    scaleY = scale,
+                    translationX = offsetX,
+                    translationY = offsetY
+                )
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.map_image), // 노선도 이미지 리소스
+                contentDescription = "지하철 노선도",
+                modifier = Modifier.fillMaxSize()
+            )
         }
+
+        // 검색 바와 길찾기 버튼
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(72.dp)
+                .padding(16.dp)
+                .align(Alignment.TopCenter),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // 검색 바
+            StationInputField(
+                value = searchText,
+                onValueChange = { searchText = it },
+                focusManager = focusManager,
+                onSearchClick = { /* 검색 로직 구현 */
+                    navController.navigate("stationDetail")
+                                },
+                modifier = Modifier.weight(1f)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            // 길찾기 버튼
+            // 길찾기 버튼 (아이콘 아래에 텍스트 추가)
+            IconButton(
+                onClick = { /* 길찾기 기능 구현 */
+                    navController.navigate("routeSearch")
+                },
+                modifier = Modifier
+                    .size(48.dp)
+                    .padding(start = 8.dp)
+                    .background(Color(0xFF252F42), shape = CircleShape)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.NearMe,
+                        contentDescription = "길찾기",
+                        tint = Color.White,
+                        modifier = Modifier.size(23.dp)
+                    )
+                    Text(
+                        text = "길찾기",
+                        color = Color.White,
+                        fontSize = 8.5.sp,
+                        modifier = Modifier.offset(y = -5.dp) // 텍스트를 위로 이동하여 간격 조정
+                    )
+                }
+            }
+
+
+        }
+
+        // 하단 네비게이션 바
+        BottomNavigationBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .height(62.dp),
+            selectedItem = selectedItem,
+            onItemSelected = { selectedItem = it },
+            navController = navController
+        )
     }
 }
