@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 fun HomeScreen(navController: NavHostController) {
     var selectedItem by remember { mutableStateOf(0) }
     var searchText by remember { mutableStateOf("") }
+    var showDialog by remember { mutableStateOf(false) }  // 경고창 표시 상태 변수
     val focusManager = LocalFocusManager.current
 
     // 초기 확대 및 위치 설정
@@ -39,7 +40,6 @@ fun HomeScreen(navController: NavHostController) {
     var offsetX by remember { mutableStateOf(0f) }
     var offsetY by remember { mutableStateOf(0f) }
 
-    // 이미지 크기와 스크롤 한계 설정
     val imageWidth = 1000f
     val imageHeight = 1000f
     val screenWidth = 500f
@@ -92,8 +92,13 @@ fun HomeScreen(navController: NavHostController) {
                 onValueChange = { searchText = it },
                 focusManager = focusManager,
                 onSearchClick = {
-                    // 검색 버튼 클릭 시 입력한 텍스트(역 번호)로 StationDetailScreen으로 이동
-                    navController.navigate("stationDetail/$searchText")
+                    if (searchText.isBlank()) {
+                        // 검색 텍스트가 비어 있으면 경고 다이얼로그 표시
+                        showDialog = true
+                    } else {
+                        // 검색 텍스트가 있으면 StationDetailScreen으로 이동
+                        navController.navigate("stationDetail/$searchText")
+                    }
                 },
                 modifier = Modifier.weight(1f)
             )
@@ -128,6 +133,19 @@ fun HomeScreen(navController: NavHostController) {
             }
         }
 
+        // 경고 다이얼로그
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                text = { Text("※ 검색할 역 번호를 입력해 주세요.") },
+                confirmButton = {
+                    TextButton(onClick = { showDialog = false }) {
+                        Text("확인")
+                    }
+                }
+            )
+        }
+
         // 하단 네비게이션 바
         BottomNavigationBar(
             modifier = Modifier
@@ -140,3 +158,4 @@ fun HomeScreen(navController: NavHostController) {
         )
     }
 }
+
