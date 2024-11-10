@@ -70,7 +70,7 @@ fun SortButton(
             onDismissRequest = { expanded = false },
             modifier = Modifier
                 .width(160.dp)
-                .height(140.dp)
+                .wrapContentHeight()
                 .border(BorderStroke(0.7.dp, Color(0xFF252f42)), shape = RoundedCornerShape(16.dp))
                 .padding(0.dp),
             offset = DpOffset(x = 0.dp, y = (-40).dp)
