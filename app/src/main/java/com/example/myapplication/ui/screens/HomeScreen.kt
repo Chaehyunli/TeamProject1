@@ -1,3 +1,4 @@
+// HomeScreen.kt
 package com.example.myapplication.ui.screens
 
 import androidx.compose.foundation.Image
@@ -21,6 +22,7 @@ import com.example.myapplication.ui.components.StationInputField
 import kotlin.math.max
 import kotlin.math.min
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
@@ -34,6 +36,7 @@ fun HomeScreen(navController: NavHostController) {
     var searchText by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }  // 경고창 표시 상태 변수
     val focusManager = LocalFocusManager.current
+    var isFocused by remember { mutableStateOf(false) }  // 포커스 상태를 추적
 
     // 초기 확대 및 위치 설정
     var scale by remember { mutableStateOf(2f) }
@@ -48,7 +51,14 @@ fun HomeScreen(navController: NavHostController) {
     val maxOffsetX = (imageWidth * scale - screenWidth) / 2
     val maxOffsetY = (imageHeight * scale - screenHeight) / 2
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable { // 화면 다른 부분을 누를 때 포커스를 해제
+                focusManager.clearFocus()
+                isFocused = false
+            }
+    ) {
         // 확대, 축소 및 스크롤 가능한 이미지
         Box(
             modifier = Modifier
@@ -93,16 +103,22 @@ fun HomeScreen(navController: NavHostController) {
                 focusManager = focusManager,
                 onSearchClick = {
                     if (searchText.isBlank()) {
-                        // 검색 텍스트가 비어 있으면 경고 다이얼로그 표시
                         showDialog = true
                     } else {
-                        // 검색 텍스트가 있으면 StationDetailScreen으로 이동
                         navController.navigate("stationDetail/$searchText")
                     }
+                    focusManager.clearFocus() // focus 해제
+                    isFocused = false
                 },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable {
+                        isFocused = true
+                    }
             )
+
             Spacer(modifier = Modifier.width(8.dp))
+
             // 길찾기 버튼
             IconButton(
                 onClick = {
@@ -158,4 +174,3 @@ fun HomeScreen(navController: NavHostController) {
         )
     }
 }
-

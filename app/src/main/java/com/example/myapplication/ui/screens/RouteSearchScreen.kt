@@ -1,3 +1,4 @@
+// RouteSearchScreen.kt
 // 길찾기 화면
 package com.example.myapplication.ui.screens
 
@@ -26,14 +27,12 @@ import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
 import com.example.myapplication.RouteFinder
 import com.example.myapplication.SubwayGraphInstance
+import com.example.myapplication.ui.components.RouteInputField
 import com.example.myapplication.ui.components.WarningDialog
-//import com.example.myapplication.ui.components.SortButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RouteSearchScreen(onBack: () -> Unit) {
-    var departure by remember { mutableStateOf("") }
-    var arrival by remember { mutableStateOf("") }
     var showAlertDialog by remember { mutableStateOf(false) }
     var alertMessage by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<RouteFinder.RouteInfo>?>(null) }
@@ -103,46 +102,30 @@ fun RouteSearchScreen(onBack: () -> Unit) {
                             }
                         }
 
-                        // Departure and Arrival Fields
+                        // Departure and Arrival Fields using RouteInputField
                         Column(
                             modifier = Modifier
                                 .clip(shape = RoundedCornerShape(10.dp))
                                 .weight(4.5f)
                         ) {
-                            OutlinedTextField(
+                            RouteInputField(
+                                label = "출발지 입력",
                                 value = inputFields[0],
                                 onValueChange = { newText -> inputFields[0] = newText },
-                                label = { Text("출발지 입력") },
-                                colors = TextFieldDefaults.outlinedTextFieldColors(
-                                    containerColor = Color.White,
-                                    focusedBorderColor = Color.Gray,
-                                    unfocusedBorderColor = Color.LightGray,
-                                    focusedTextColor = Color.Black,
-                                    unfocusedTextColor = Color.Black
-                                ),
-                                shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp),
-
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(56.dp) // 높이를 56.dp로 조정하여 입력 텍스트가 더 잘 보이도록 설정
-                                    .padding(horizontal = 8.dp) // 가로 패딩 추가
+                                onDelete = { inputFields[0] = "" },
+                                canDelete = inputFields[0].isNotEmpty(),
+                                focusManager = focusManager
                             )
-                            OutlinedTextField(
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            RouteInputField(
+                                label = "도착지 입력",
                                 value = inputFields[1],
                                 onValueChange = { newText -> inputFields[1] = newText },
-                                label = { Text("도착지 입력") },
-                                colors = TextFieldDefaults.outlinedTextFieldColors(
-                                    containerColor = Color.White,
-                                    focusedBorderColor = Color.Gray,
-                                    unfocusedBorderColor = Color.LightGray,
-                                    focusedTextColor = Color.Black,
-                                    unfocusedTextColor = Color.Black
-                                ),
-                                shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(56.dp) // 높이를 56.dp로 조정
-                                    .padding(horizontal = 8.dp) // 가로 패딩 추가
+                                onDelete = { inputFields[1] = "" },
+                                canDelete = inputFields[1].isNotEmpty(),
+                                focusManager = focusManager
                             )
                         }
                     }
@@ -235,7 +218,6 @@ fun RouteSearchScreen(onBack: () -> Unit) {
                             color = Color.DarkGray,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium
-                            // 나중에 UI에 맞게 출력되는 정보 변경
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                     }
@@ -249,10 +231,10 @@ fun RouteSearchScreen(onBack: () -> Unit) {
                     modifier = Modifier.fillMaxSize()
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.backgroundlogo),
+                        painter = painterResource(id = R.drawable.backgroundlogo), // 사용할 이미지 리소스 ID
                         contentDescription = "배경 이미지",
                         modifier = Modifier
-                            .size(200.dp)
+                            .size(200.dp) // 이미지 크기 조정
                             .align(Alignment.CenterHorizontally)
                     )
                 }
@@ -266,9 +248,3 @@ fun RouteSearchScreen(onBack: () -> Unit) {
         )
     }
 }
-
-
-
-
-
-
