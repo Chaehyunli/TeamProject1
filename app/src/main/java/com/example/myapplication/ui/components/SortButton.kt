@@ -23,6 +23,7 @@ fun SortButton(
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedSortCriteria by remember { mutableStateOf("최단 거리 순") }
+    var menuItems by remember { mutableStateOf(listOf("최단 거리 순", "최소 시간 순", "최소 비용 순", "최소 환승 순")) }
 
     Box(
         modifier = Modifier
@@ -76,8 +77,6 @@ fun SortButton(
                 .padding(0.dp),
             offset = DpOffset(x = 0.dp, y = (-40).dp)
         ) {
-            val menuItems = listOf("최단 거리 순", "최소 시간 순", "최소 비용 순", "최소 환승 순")
-
             Column {
                 menuItems.forEachIndexed { index, text ->
                     DropdownMenuItem(
@@ -85,6 +84,9 @@ fun SortButton(
                             selectedSortCriteria = text
                             expanded = false
                             onSortCriteriaSelected(text) // 선택된 기준을 RouteSearchScreen에 전달
+
+                            // 선택된 항목을 리스트의 맨 앞으로 이동시키고 나머지를 뒤로 정렬
+                            menuItems = listOf(text) + menuItems.filter { it != text }
                         },
                         text = {
                             Row(
@@ -117,4 +119,3 @@ fun SortButton(
         }
     }
 }
-
