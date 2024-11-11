@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.sp
+import com.example.myapplication.ui.components.WarningDialog
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -149,16 +150,10 @@ fun HomeScreen(navController: NavHostController) {
             }
         }
 
-        // 경고 다이얼로그
         if (showDialog) {
-            AlertDialog(
-                onDismissRequest = { showDialog = false },
-                text = { Text("※ 검색할 역 번호를 입력해 주세요.") },
-                confirmButton = {
-                    TextButton(onClick = { showDialog = false }) {
-                        Text("확인")
-                    }
-                }
+            WarningDialog(
+                message = "※ 검색할 역, 호선을 입력해 주세요.",
+                onDismiss = { showDialog = false }
             )
         }
 
