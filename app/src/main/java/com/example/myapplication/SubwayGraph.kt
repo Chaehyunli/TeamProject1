@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import java.util.*
 import android.content.Context
 import kotlin.String
 import java.io.File
@@ -125,6 +126,36 @@ object SubwayGraphInstance {
             loadDataFromAssets(context)
         }
         println("SubwayGraph 데이터가 성공적으로 초기화되었습니다.")
+    }
+
+    // 특정 노선 번호에 따라 노선 내 연결된 역을 깊이 우선 탐색으로 순서 정렬
+    fun getStationsByLineInOrder(lineNumber: Int): List<Int> {
+        val visited = mutableSetOf<Int>()
+        val stationsInLine = mutableListOf<Int>()
+
+        fun dfs(station: Int) {
+            visited.add(station)
+            stationsInLine.add(station)
+            val neighbors = subwayGraph.stations[station]?.neighbors ?: return
+            neighbors.filter { it.line == lineNumber && it.destination !in visited }
+                .forEach { dfs(it.destination) }
+        }
+
+        // 각 노선의 첫 번째 역 번호를 찾고 탐색 시작
+        val firstStation = subwayGraph.stations.values
+            .filter { lineNumber in it.lineNumbers }
+            .minByOrNull { it.stationNumber }
+
+        firstStation?.let { dfs(it.stationNumber) }
+
+        // 첫 번째 역 번호의 위치에 따라 리스트 반전
+        val firstStationPosition = lineNumber * 100 + 1  // 예: 1호선이면 101, 2호선이면 201 등
+
+        if (firstStationPosition >= 0 && firstStationPosition >= stationsInLine.size / 2) {
+            stationsInLine.reverse()
+        }
+
+        return stationsInLine
     }
 
     // 개별 경로에 접근할 수 있는 getter 함수 추가
