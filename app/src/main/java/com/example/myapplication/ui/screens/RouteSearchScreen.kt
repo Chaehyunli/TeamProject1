@@ -112,8 +112,8 @@ fun RouteSearchScreen(onBack: () -> Unit) {
                                 label = "출발지 입력",
                                 value = inputFields[0],
                                 onValueChange = { newText -> inputFields[0] = newText },
-                                onDelete = { inputFields[0] = "" },
-                                canDelete = inputFields[0].isNotEmpty(),
+                                onDelete = {}, // 삭제 기능 필요 없음
+                                canDeleteField = inputFields[0].isNotEmpty(),
                                 focusManager = focusManager
                             )
 
@@ -123,8 +123,8 @@ fun RouteSearchScreen(onBack: () -> Unit) {
                                 label = "도착지 입력",
                                 value = inputFields[1],
                                 onValueChange = { newText -> inputFields[1] = newText },
-                                onDelete = { inputFields[1] = "" },
-                                canDelete = inputFields[1].isNotEmpty(),
+                                onDelete = {}, // 삭제 기능 필요 없음
+                                canDeleteField = inputFields[1].isNotEmpty(),
                                 focusManager = focusManager
                             )
                         }

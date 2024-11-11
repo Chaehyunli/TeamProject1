@@ -31,13 +31,13 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun RouteInputField(
     label: String,
-    onDelete: () -> Unit,
-    canDelete: Boolean,
-    focusManager: FocusManager,
     value: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    onDelete: () -> Unit,
+    focusManager: FocusManager,
+    canDeleteField: Boolean
 ) {
-    var isFocused by remember { mutableStateOf(false) }  // 포커스 상태를 추적
+    var isFocused by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
@@ -80,15 +80,19 @@ fun RouteInputField(
                     .fillMaxSize()
                     .onFocusChanged { focusState ->
                         isFocused = focusState.isFocused
-                        if (!isFocused && value.isEmpty()) {
-                            onValueChange("") // 포커스 해제 후 빈 입력 값으로 유지
-                        }
                     }
             )
         }
-        if (canDelete) {
+
+        if (value.isNotEmpty() || canDeleteField) {
             IconButton(
-                onClick = onDelete,
+                onClick = {
+                    if (value.isEmpty() && canDeleteField) {
+                        onDelete() // 빈 필드일 때 필드 자체 삭제
+                    } else {
+                        onValueChange("") // 값이 있을 때는 값 삭제
+                    }
+                },
                 modifier = Modifier
                     .size(20.dp)
                     .padding(start = 4.dp)

@@ -65,15 +65,11 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                 inputFields.forEachIndexed { index, text ->
                     RouteInputField(
                         label = "${index + 1}. 출발지 입력",
-                        onDelete = {
-                            if (inputFields.size > 2) {
-                                inputFields.removeAt(index)
-                            }
-                        },
-                        canDelete = inputFields.size > 2,
-                        focusManager = focusManager,
                         value = text,
-                        onValueChange = { newText -> inputFields[index] = newText }
+                        onValueChange = { newValue -> inputFields[index] = newValue },
+                        onDelete = { inputFields.removeAt(index) },
+                        focusManager = focusManager,
+                        canDeleteField = inputFields.size > 2 || text.isNotEmpty() // 처음 두 필드는 값이 있을 때만 X 표시
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
