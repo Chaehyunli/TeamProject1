@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import com.example.myapplication.R
 import com.example.myapplication.RouteFinder
 import com.example.myapplication.SubwayGraphInstance
@@ -34,6 +36,7 @@ import com.example.myapplication.ui.components.WarningDialog
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RouteSearchScreen(
+    navController: NavController,
     navBackStackEntry: NavBackStackEntry, // NavBackStackEntry를 추가하여 매개변수 접근
     onBack: () -> Unit
 ) {
@@ -41,11 +44,11 @@ fun RouteSearchScreen(
     val startStation = navBackStackEntry.arguments?.getString("startStation") ?: ""
     val endStation = navBackStackEntry.arguments?.getString("endStation") ?: ""
 
-    var showAlertDialog by remember { mutableStateOf(false) }
-    var alertMessage by remember { mutableStateOf("") }
-    var searchResults by remember { mutableStateOf<List<RouteFinder.RouteInfo>?>(null) }
+    var showAlertDialog by rememberSaveable  { mutableStateOf(false) }
+    var alertMessage by rememberSaveable  { mutableStateOf("") }
+    var searchResults by rememberSaveable  { mutableStateOf<List<RouteFinder.RouteInfo>?>(null) }
     val focusManager = LocalFocusManager.current
-    var selectedSortCriteria by remember { mutableStateOf("최단 거리 순") }
+    var selectedSortCriteria by rememberSaveable  { mutableStateOf("최단 거리 순") }
 
     // 출발지와 도착지 입력 필드를 관리하는 리스트
     var inputFields = remember { mutableStateListOf(startStation, endStation) } // startStation 및 endStation 기본값 설정
@@ -181,6 +184,7 @@ fun RouteSearchScreen(
                                     searchResults = SubwayGraphInstance.findUniqueRoutes(startStation, endStation)
                                 }
                             }
+                            focusManager.clearFocus()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF242F42)),
                         shape = RoundedCornerShape(16.dp)
@@ -212,17 +216,22 @@ fun RouteSearchScreen(
                             "최소 환승 순" -> compareBy { it.transfers }
                             else -> compareBy { it.time }
                         }
-                    )?.forEach { route ->
+                    )?.forEachIndexed { index, route -> // forEachIndexed 사용
                         Text(
                             text = """
-                                경로: ${route.path.joinToString(" -> ")}
-                                기준: ${route.criteria.joinToString(", ")}
-                                총 시간: ${route.time}초
-                                총 거리: ${route.distance}m
-                                환승 횟수: ${route.transfers}회
-                                총 비용: ${route.cost}원
-                            """.trimIndent(),
-                            modifier = Modifier.padding(8.dp),
+                    경로: ${route.path.joinToString(" -> ")}
+                    기준: ${route.criteria.joinToString(", ")}
+                    총 시간: ${route.time}초
+                    총 거리: ${route.distance}m
+                    환승 횟수: ${route.transfers}회
+                    총 비용: ${route.cost}원
+                """.trimIndent(),
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .clickable {
+                                    // 경로 클릭 시 RouteDetailScreen으로 이동
+                                    navController.navigate("routeDetail/$index")
+                                },
                             color = Color.DarkGray,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium
