@@ -129,35 +129,61 @@ object SubwayGraphInstance {
         println("SubwayGraph 데이터가 성공적으로 초기화되었습니다.")
     }
 
-    // 특정 노선 번호에 따라 노선 내 연결된 역을 깊이 우선 탐색으로 순서 정렬
     fun getStationsByLineInOrder(lineNumber: Int): List<Int> {
         val visited = mutableSetOf<Int>()
-        val stationsInLine = mutableListOf<Int>()
+        val stationsInLine = LinkedList<Int>()
 
         fun dfs(station: Int) {
+            if (station in visited) return
             visited.add(station)
             stationsInLine.add(station)
+
+            // 현재 역의 인접 역을 탐색
             val neighbors = subwayGraph.stations[station]?.neighbors ?: return
             neighbors.filter { it.line == lineNumber && it.destination !in visited }
                 .forEach { dfs(it.destination) }
         }
 
-        // 각 노선의 첫 번째 역 번호를 찾고 탐색 시작
-        val firstStation = subwayGraph.stations.values
-            .filter { lineNumber in it.lineNumbers }
-            .minByOrNull { it.stationNumber }
+        // 각 노선의 시작점을 설정 (예: 601번)
+        val firstStationNumber = lineNumber * 100 + 1
+        var isCircularLine = false
 
-        firstStation?.let { dfs(it.stationNumber) }
+        // 순환 구조 여부 확인
+        val startingNeighbors = subwayGraph.stations[firstStationNumber]?.neighbors
+        if (startingNeighbors != null) {
+            val visitedForCycleCheck = mutableSetOf<Int>()
+            fun checkCycle(station: Int) {
+                if (station in visitedForCycleCheck) {
+                    isCircularLine = true
+                    return
+                }
+                visitedForCycleCheck.add(station)
+                subwayGraph.stations[station]?.neighbors
+                    ?.filter { it.line == lineNumber && it.destination !in visitedForCycleCheck }
+                    ?.forEach { checkCycle(it.destination) }
+            }
+            checkCycle(firstStationNumber)
+        }
+
+        // 순환 구조인 경우에만 지정된 첫 번째 역에서 탐색 시작
+        if (isCircularLine) {
+            dfs(firstStationNumber)
+        } else {
+            // 순환 구조가 아닐 경우, 노선의 임의의 한 역에서 DFS 시작
+            val anyStartingStation = subwayGraph.stations.values
+                .firstOrNull { lineNumber in it.lineNumbers }
+            anyStartingStation?.let { dfs(it.stationNumber) }
+        }
 
         // 첫 번째 역 번호의 위치에 따라 리스트 반전
-        val firstStationPosition = lineNumber * 100 + 1  // 예: 1호선이면 101, 2호선이면 201 등
-
-        if (firstStationPosition >= 0 && firstStationPosition >= stationsInLine.size / 2) {
+        val midpoint = stationsInLine.size / 2
+        if (stationsInLine.indexOf(firstStationNumber) > midpoint) {
             stationsInLine.reverse()
         }
 
-        return stationsInLine
+        return stationsInLine.distinct() // 중복 제거 후 반환
     }
+
 
     // 개별 경로에 접근할 수 있는 getter 함수 추가
     fun getShortestTimeRoute(startStation: Int, endStation: Int): RouteFinder.RouteInfo? {
