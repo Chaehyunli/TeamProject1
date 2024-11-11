@@ -1,3 +1,4 @@
+// SearchButton.kt
 // 길찾기 검색 버튼
 package com.example.myapplication.ui.components
 

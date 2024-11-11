@@ -1,5 +1,5 @@
 //홈 화면 검색 바
-//StationInputField.kt
+// StationInputField.kt
 package com.example.myapplication.ui.components
 
 import androidx.compose.foundation.background
