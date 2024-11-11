@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
@@ -31,7 +32,7 @@ fun MeetingPlaceScreen(navController: NavHostController) {
     var selectedItem by remember { mutableStateOf(1) }
     var showAlertDialog by remember { mutableStateOf(false) }
     var invalidStationAlert by remember { mutableStateOf(false) }
-    var inputFields = remember { mutableStateListOf("", "") }
+    var inputFields by rememberSaveable { mutableStateOf(listOf("", "")) }
 
     Scaffold(
         containerColor = Color.White,
@@ -66,8 +67,16 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                     RouteInputField(
                         label = "${index + 1}. 출발지 입력",
                         value = text,
-                        onValueChange = { newValue -> inputFields[index] = newValue },
-                        onDelete = { inputFields.removeAt(index) },
+                        onValueChange = { newValue ->
+                            inputFields = inputFields.toMutableList().apply { this[index] = newValue }
+                        },
+                        onDelete = {
+                            if (inputFields.size > 2) {
+                                inputFields = inputFields.toMutableList().apply { removeAt(index) }
+                            } else {
+                                inputFields = inputFields.toMutableList().apply { this[index] = "" }
+                            }
+                        },
                         focusManager = focusManager,
                         canDeleteField = inputFields.size > 2 || text.isNotEmpty() // 처음 두 필드는 값이 있을 때만 X 표시
                     )
@@ -80,7 +89,7 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                     modifier = Modifier
                         .clickable {
                             if (inputFields.size < 4) {
-                                inputFields.add("")
+                                inputFields = inputFields + ""
                             }
                             focusManager.clearFocus()
                         }
@@ -99,6 +108,7 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                                 stationNumber == null || SubwayGraphInstance.subwayGraph.getNeighbors(stationNumber) == null
                             }) {
                             invalidStationAlert = true
+                            focusManager.clearFocus() // 포커스 해제
                         } else {
                             SubwayGraphInstance.calculateMeetingPlaceRoute(inputFields)?.let { result ->
                                 val meetingPlaceResult = MeetingPlaceResult(

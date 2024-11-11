@@ -35,11 +35,17 @@ fun MeetingPlaceResultScreen(
     val bestStation = meetingPlaceResult.bestStation
     val timesFromStartStations = meetingPlaceResult.timesFromStartStations
 
-    // 소요 시간을 분과 초로 변환하는 함수
+    // 소요 시간을 시간, 분, 초로 변환하는 함수
     fun formatTime(seconds: Int): String {
-        val minutes = seconds / 60
+        val hours = seconds / 3600
+        val minutes = (seconds % 3600) / 60
         val remainingSeconds = seconds % 60
-        return "${minutes}분 ${String.format("%02d", remainingSeconds)}초"
+
+        return when {
+            hours > 0 -> "${hours}시간 ${minutes}분 ${String.format("%02d", remainingSeconds)}초"
+            minutes > 0 -> "${minutes}분 ${String.format("%02d", remainingSeconds)}초"
+            else -> "${String.format("%02d", remainingSeconds)}초"
+        }
     }
 
     Scaffold(

@@ -1,5 +1,4 @@
 // RouteSearchScreen.kt
-// 길찾기 화면
 package com.example.myapplication.ui.screens
 
 import SortButton
@@ -44,17 +43,47 @@ fun RouteSearchScreen(
     val startStation = navBackStackEntry.arguments?.getString("startStation") ?: ""
     val endStation = navBackStackEntry.arguments?.getString("endStation") ?: ""
 
-    var showAlertDialog by rememberSaveable  { mutableStateOf(false) }
-    var alertMessage by rememberSaveable  { mutableStateOf("") }
-    var searchResults by rememberSaveable  { mutableStateOf<List<RouteFinder.RouteInfo>?>(null) }
+    var showAlertDialog by rememberSaveable { mutableStateOf(false) }
+    var alertMessage by rememberSaveable { mutableStateOf("") }
+    var searchResults by rememberSaveable { mutableStateOf<List<RouteFinder.RouteInfo>?>(null) }
     val focusManager = LocalFocusManager.current
-    var selectedSortCriteria by rememberSaveable  { mutableStateOf("최단 거리 순") }
+    var selectedSortCriteria by rememberSaveable { mutableStateOf("최단 거리 순") }
 
     // 출발지와 도착지 입력 필드를 관리하는 리스트
-    var inputFields = remember { mutableStateListOf(startStation, endStation) } // startStation 및 endStation 기본값 설정
+    var inputFields by rememberSaveable { mutableStateOf(listOf(startStation, endStation)) }
 
     // 지하철 전체 역 목록을 가져와 저장
     val validStations = SubwayGraphInstance.subwayGraph.getAllStationNumbers()
+
+    // 검색 로직을 함수로 정의하여 전환 버튼과 검색 버튼에서 호출 가능하게 함
+    fun onSearch() {
+        val departure = inputFields[0]
+        val arrival = inputFields[1]
+        when {
+            departure.isBlank() -> {
+                alertMessage = "※ 출발지를 입력하세요."
+                showAlertDialog = true
+            }
+            arrival.isBlank() -> {
+                alertMessage = "※ 도착지를 입력하세요."
+                showAlertDialog = true
+            }
+            departure.toIntOrNull() == null || departure.toInt() !in validStations -> {
+                alertMessage = "※ 출발지 역이 유효하지 않습니다."
+                showAlertDialog = true
+            }
+            arrival.toIntOrNull() == null || arrival.toInt() !in validStations -> {
+                alertMessage = "※ 도착지 역이 유효하지 않습니다."
+                showAlertDialog = true
+            }
+            else -> {
+                val startStation = departure.toInt()
+                val endStation = arrival.toInt()
+                searchResults = SubwayGraphInstance.findUniqueRoutes(startStation, endStation)
+            }
+        }
+        focusManager.clearFocus()
+    }
 
     Scaffold(
         content = { paddingValues ->
@@ -98,8 +127,8 @@ fun RouteSearchScreen(
                             IconButton(
                                 onClick = {
                                     val temp = inputFields[0]
-                                    inputFields[0] = inputFields[1]
-                                    inputFields[1] = temp
+                                    inputFields = listOf(inputFields[1], temp)
+                                    onSearch() // 전환 후 자동으로 검색 실행
                                 },
                                 modifier = Modifier
                                     .padding(4.dp)
@@ -122,7 +151,7 @@ fun RouteSearchScreen(
                             RouteInputField(
                                 label = "출발지 입력",
                                 value = inputFields[0],
-                                onValueChange = { newText -> inputFields[0] = newText },
+                                onValueChange = { newText -> inputFields = listOf(newText, inputFields[1]) },
                                 onDelete = {}, // 삭제 기능 필요 없음
                                 canDeleteField = inputFields[0].isNotEmpty(),
                                 focusManager = focusManager
@@ -133,7 +162,7 @@ fun RouteSearchScreen(
                             RouteInputField(
                                 label = "도착지 입력",
                                 value = inputFields[1],
-                                onValueChange = { newText -> inputFields[1] = newText },
+                                onValueChange = { newText -> inputFields = listOf(inputFields[0], newText) },
                                 onDelete = {}, // 삭제 기능 필요 없음
                                 canDeleteField = inputFields[1].isNotEmpty(),
                                 focusManager = focusManager
@@ -156,35 +185,10 @@ fun RouteSearchScreen(
 
                     Spacer(modifier = Modifier.width(35.dp))
 
-                    // 변경된 부분: 검색 버튼
+                    // 검색 버튼
                     Button(
                         onClick = {
-                            val departure = inputFields[0]
-                            val arrival = inputFields[1]
-                            when {
-                                departure.isBlank() -> {
-                                    alertMessage = "※ 출발지를 입력하세요."
-                                    showAlertDialog = true
-                                }
-                                arrival.isBlank() -> {
-                                    alertMessage = "※ 도착지를 입력하세요."
-                                    showAlertDialog = true
-                                }
-                                departure.toIntOrNull() == null || departure.toInt() !in validStations -> {
-                                    alertMessage = "※ 출발지 역이 유효하지 않습니다."
-                                    showAlertDialog = true
-                                }
-                                arrival.toIntOrNull() == null || arrival.toInt() !in validStations -> {
-                                    alertMessage = "※ 도착지 역이 유효하지 않습니다."
-                                    showAlertDialog = true
-                                }
-                                else -> {
-                                    val startStation = departure.toInt()
-                                    val endStation = arrival.toInt()
-                                    searchResults = SubwayGraphInstance.findUniqueRoutes(startStation, endStation)
-                                }
-                            }
-                            focusManager.clearFocus()
+                            onSearch() // 검색 로직 호출
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF242F42)),
                         shape = RoundedCornerShape(16.dp)
@@ -216,7 +220,7 @@ fun RouteSearchScreen(
                             "최소 환승 순" -> compareBy { it.transfers }
                             else -> compareBy { it.time }
                         }
-                    )?.forEachIndexed { index, route -> // forEachIndexed 사용
+                    )?.forEachIndexed { index, route ->
                         Text(
                             text = """
                     경로: ${route.path.joinToString(" -> ")}
@@ -229,8 +233,18 @@ fun RouteSearchScreen(
                             modifier = Modifier
                                 .padding(8.dp)
                                 .clickable {
-                                    // 경로 클릭 시 RouteDetailScreen으로 이동
-                                    navController.navigate("routeDetail/$index")
+                                    // 각 필드를 개별 문자열로 전달
+                                    val path = route.path.joinToString(",")
+                                    val criteria = route.criteria.joinToString(",")
+                                    val time = route.time
+                                    val distance = route.distance
+                                    val transfers = route.transfers
+                                    val cost = route.cost
+
+                                    // NavController에 전달
+                                    navController.navigate(
+                                        "routeDetail/$path/$criteria/$time/$distance/$transfers/$cost"
+                                    )
                                 },
                             color = Color.DarkGray,
                             fontSize = 16.sp,
@@ -265,4 +279,3 @@ fun RouteSearchScreen(
         )
     }
 }
-
