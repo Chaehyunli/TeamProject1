@@ -18,20 +18,19 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.myapplication.R
 import com.example.myapplication.ui.components.StationDetailDialog
-import androidx.compose.foundation.background
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.draw.shadow
-import com.example.myapplication.Edge
 import com.example.myapplication.SubwayGraphInstance
-import kotlin.math.roundToInt
-import kotlin.math.max
-import kotlin.math.min
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StationDetailScreen(stationName: String, onBack: () -> Unit) {
+fun StationDetailScreen(
+    navController: NavController, // NavController를 추가하여 다른 화면으로 이동할 수 있도록 설정
+    stationName: String,
+    onBack: () -> Unit
+) {
+    // stationName을 Int로 변환하여 SubwayGraphInstance에서 역 번호 가져오기
     val stationNumber = stationName.toIntOrNull()
 
     // SubwayGraphInstance에서 해당 역 번호에 대한 정보를 개별적으로 가져오기
@@ -88,7 +87,7 @@ fun StationDetailScreen(stationName: String, onBack: () -> Unit) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "뒤로가기")
                     }
                 },
-                modifier = Modifier.shadow(8.dp),
+                modifier = Modifier,
                 colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White),
             )
         },
@@ -96,7 +95,6 @@ fun StationDetailScreen(stationName: String, onBack: () -> Unit) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0xFFffffff))
                     .padding(paddingValues),
                 contentAlignment = Alignment.BottomCenter
             ) {
@@ -128,12 +126,10 @@ fun StationDetailScreen(stationName: String, onBack: () -> Unit) {
 
                 // 하단 정보 카드 (화면 하단에 고정)
                 if (isLineNumber && orderedStationsInLine != null) {
-                    // 특정 호선의 연결된 순서의 전체 역 목록을 스크롤 가능하게 표시
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
-                            .background(Color.White, shape = RoundedCornerShape(12.dp))
                     ) {
                         items(orderedStationsInLine) { station ->
                             Text(
@@ -152,13 +148,20 @@ fun StationDetailScreen(stationName: String, onBack: () -> Unit) {
                         transferInfo = transferInfo,
                         transferDetailInfo = neighbors?.joinToString("\n") { edge ->
                             "${edge.destination}역 방면 | ${if (lineNumbers?.contains(edge.line) == true) "환승 가능" else "환승 불가"}"
-                        } ?: "해당 역에 대한 추가 정보가 없습니다."
+                        } ?: "해당 역에 대한 추가 정보가 없습니다.",
+                        onStartClick = {
+                            navController.navigate("routeSearch?startStation=$stationNumber&endStation=")
+                        },
+                        onEndClick = {
+                            navController.navigate("routeSearch?startStation=&endStation=$stationNumber")
+                        }
                     )
                 }
             }
         }
     )
 }
+
 
 
 
