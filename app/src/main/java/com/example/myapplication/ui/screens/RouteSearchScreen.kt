@@ -24,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavBackStackEntry
 import com.example.myapplication.R
 import com.example.myapplication.RouteFinder
 import com.example.myapplication.SubwayGraphInstance
@@ -32,7 +33,14 @@ import com.example.myapplication.ui.components.WarningDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RouteSearchScreen(onBack: () -> Unit) {
+fun RouteSearchScreen(
+    navBackStackEntry: NavBackStackEntry, // NavBackStackEntry를 추가하여 매개변수 접근
+    onBack: () -> Unit
+) {
+    // startStation 및 endStation 값을 NavBackStackEntry에서 가져와 기본값으로 설정
+    val startStation = navBackStackEntry.arguments?.getString("startStation") ?: ""
+    val endStation = navBackStackEntry.arguments?.getString("endStation") ?: ""
+
     var showAlertDialog by remember { mutableStateOf(false) }
     var alertMessage by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<RouteFinder.RouteInfo>?>(null) }
@@ -40,7 +48,7 @@ fun RouteSearchScreen(onBack: () -> Unit) {
     var selectedSortCriteria by remember { mutableStateOf("최단 거리 순") }
 
     // 출발지와 도착지 입력 필드를 관리하는 리스트
-    var inputFields = remember { mutableStateListOf("", "") }
+    var inputFields = remember { mutableStateListOf(startStation, endStation) } // startStation 및 endStation 기본값 설정
 
     // 지하철 전체 역 목록을 가져와 저장
     val validStations = SubwayGraphInstance.subwayGraph.getAllStationNumbers()
@@ -186,7 +194,7 @@ fun RouteSearchScreen(onBack: () -> Unit) {
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
-                HorizontalDivider(color = Color(0xFF808590), thickness = 0.5.dp)
+                Divider(color = Color(0xFF808590), thickness = 0.5.dp)
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // 경로 찾기 결과 표시
@@ -231,10 +239,10 @@ fun RouteSearchScreen(onBack: () -> Unit) {
                     modifier = Modifier.fillMaxSize()
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.backgroundlogo), // 사용할 이미지 리소스 ID
+                        painter = painterResource(id = R.drawable.backgroundlogo),
                         contentDescription = "배경 이미지",
                         modifier = Modifier
-                            .size(200.dp) // 이미지 크기 조정
+                            .size(200.dp)
                             .align(Alignment.CenterHorizontally)
                     )
                 }
@@ -248,3 +256,4 @@ fun RouteSearchScreen(onBack: () -> Unit) {
         )
     }
 }
+
