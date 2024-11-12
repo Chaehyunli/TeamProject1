@@ -1,3 +1,4 @@
+// AppNavHost.kt
 package com.example.myapplication.ui.navigation
 
 import androidx.compose.runtime.Composable
@@ -40,31 +41,44 @@ fun AppNavHost(navController: NavHostController) {
         }
 
         composable(
-            route = "routeDetail/{path}/{criteria}/{time}/{distance}/{transfers}/{cost}",
+            route = "routeDetail/{path}/{transferStations}/{time}/{distance}/{transfers}/{cost}/{lineNumbers}",
             arguments = listOf(
                 navArgument("path") { type = NavType.StringType },
-                navArgument("criteria") { type = NavType.StringType },
+                navArgument("transferStations") { type = NavType.StringType },
                 navArgument("time") { type = NavType.IntType },
                 navArgument("distance") { type = NavType.IntType },
                 navArgument("transfers") { type = NavType.IntType },
-                navArgument("cost") { type = NavType.IntType }
+                navArgument("cost") { type = NavType.IntType },
+                navArgument("lineNumbers") { type = NavType.StringType } // lineNumbers 추가
             )
         ) { backStackEntry ->
             // 전달받은 매개변수들을 추출하여 RouteDetailScreen으로 전달
             val path = backStackEntry.arguments?.getString("path")?.split(",") ?: emptyList()
-            val criteria = backStackEntry.arguments?.getString("criteria")?.split(",") ?: emptyList()
+            val transferStations = backStackEntry.arguments?.getString("transferStations")?.split(",") ?: emptyList()
             val time = backStackEntry.arguments?.getInt("time") ?: 0
             val distance = backStackEntry.arguments?.getInt("distance") ?: 0
             val transfers = backStackEntry.arguments?.getInt("transfers") ?: 0
             val cost = backStackEntry.arguments?.getInt("cost") ?: 0
+            val lineNumbers = backStackEntry.arguments?.getString("lineNumbers")
+                ?.split(",")?.mapNotNull { it.toIntOrNull() } ?: emptyList()
+
+            // 디버깅 로그 추가
+            println("path: $path")
+            println("transferStations: $transferStations")
+            println("time: $time")
+            println("distance: $distance")
+            println("transfers: $transfers")
+            println("cost: $cost")
+            println("lineNumbers: $lineNumbers")
 
             RouteDetailScreen(
                 path = path,
-                criteria = criteria,
+                transferStations = transferStations,
                 time = time,
                 distance = distance,
                 transfers = transfers,
                 cost = cost,
+                lineNumbers = lineNumbers, // 검증된 lineNumbers 전달
                 onBack = { navController.popBackStack() }
             )
         }
