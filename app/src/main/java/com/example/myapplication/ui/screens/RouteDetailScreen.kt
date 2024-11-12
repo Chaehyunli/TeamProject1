@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.myapplication.ui.viewmodel.RouteDetailViewModel
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -32,8 +33,13 @@ fun RouteDetailScreen(
     distance: Int,
     transfers: Int,
     cost: Int,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    viewModel: RouteDetailViewModel
 ) {
+    fun onButtonClick() {
+        viewModel.addCost(cost) // 선택한 요금을 기존 교통비에 더하기
+    }
+
     // 시간, 분, 초 계산
     val hours = time / 3600
     val minutes = (time % 3600) / 60
@@ -176,7 +182,7 @@ fun RouteDetailScreen(
                         .shadow(8.dp, shape = RoundedCornerShape(16.dp))
                         .background(Color(0xFF242F42), shape = RoundedCornerShape(16.dp))
                         .border(2.dp, Color(0xFFCBD2DF), RoundedCornerShape(16.dp)) // 테두리 설정
-                        .clickable { /* 월별 교통비 데이터 보내기 */ }
+                        .clickable { onButtonClick() }
                         .wrapContentSize() // 내부 콘텐츠 크기에 맞춤
                 ) {
                     Row(

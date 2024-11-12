@@ -2,12 +2,15 @@
 package com.example.myapplication.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.NavType
 import com.example.myapplication.ui.screens.*
+import com.example.myapplication.ui.viewmodel.MonthlyTransportViewModel
+import com.example.myapplication.ui.viewmodel.RouteDetailViewModel
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
@@ -52,7 +55,8 @@ fun AppNavHost(navController: NavHostController) {
                 navArgument("lineNumbers") { type = NavType.StringType } // lineNumbers 추가
             )
         ) { backStackEntry ->
-            // 전달받은 매개변수들을 추출하여 RouteDetailScreen으로 전달
+            val viewModel: RouteDetailViewModel = viewModel() // RouteDetailViewModel 인스턴스 생성
+
             val path = backStackEntry.arguments?.getString("path")?.split(",") ?: emptyList()
             val transferStations = backStackEntry.arguments?.getString("transferStations")?.split(",") ?: emptyList()
             val time = backStackEntry.arguments?.getInt("time") ?: 0
@@ -62,15 +66,6 @@ fun AppNavHost(navController: NavHostController) {
             val lineNumbers = backStackEntry.arguments?.getString("lineNumbers")
                 ?.split(",")?.mapNotNull { it.toIntOrNull() } ?: emptyList()
 
-            // 디버깅 로그 추가
-            println("path: $path")
-            println("transferStations: $transferStations")
-            println("time: $time")
-            println("distance: $distance")
-            println("transfers: $transfers")
-            println("cost: $cost")
-            println("lineNumbers: $lineNumbers")
-
             RouteDetailScreen(
                 path = path,
                 transferStations = transferStations,
@@ -79,13 +74,23 @@ fun AppNavHost(navController: NavHostController) {
                 transfers = transfers,
                 cost = cost,
                 lineNumbers = lineNumbers, // 검증된 lineNumbers 전달
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                viewModel = viewModel // ViewModel 전달
+            )
+        }
+
+        // MonthlyTransport 화면
+        composable(Screen.MonthlyTransport.route) {
+            // MonthlyTransportViewModel 생성 후 전달
+            val monthlyTransportViewModel: MonthlyTransportViewModel = viewModel()
+            MonthlyTransportScreen(
+                navController = navController,
+                viewModel = monthlyTransportViewModel
             )
         }
 
         // 기타 화면들
         composable(Screen.MeetingPlace.route) { MeetingPlaceScreen(navController) }
-        composable(Screen.MonthlyTransport.route) { MonthlyTransportScreen(navController) }
         composable(Screen.Settings.route) { SettingsScreen(navController) }
 
         // MeetingPlaceResult 화면
