@@ -38,7 +38,7 @@ class RouteFinder(private val graph: SubwayGraph) {
         val distances = mutableMapOf<Int, RouteInfo>() // 각 역까지의 최적 경로 정보를 저장할 맵
 
         // 초기 상태: 출발점에 대한 초기 RouteInfo 추가
-        queue.add(RouteInfo(0, 0, 0, 0, listOf(start), -1))  // -1은 초기 상태로, 아직 노선이 없음을 나타냄
+        queue.add(RouteInfo(0, 0, 0, 0, listOf(start), -1, lineNumbers = emptyList()))  // -1은 초기 상태로, 아직 노선이 없음을 나타냄
 
         while (queue.isNotEmpty()) {
             val current = queue.poll() ?: continue  // current가 null이면 다음 반복으로 넘어감
@@ -64,13 +64,16 @@ class RouteFinder(private val graph: SubwayGraph) {
                 }
 
                 val newPath = current.path + edge.destination // 새로운 경로 생성
+                val newLineNumbers = current.lineNumbers + edge.line // 다음 역으로 가는 호선 번호 추가
+
                 val newInfo = RouteInfo(
                     time = current.time + edge.time,               // 시간 누적
                     distance = current.distance + edge.distance,   // 거리 누적
                     cost = current.cost + edge.cost,               // 비용 누적
                     transfers = newTransfers,                      // 환승 횟수 업데이트
                     path = newPath,                                // 경로 업데이트
-                    currentLine = edge.line                        // 현재 노선 번호 업데이트
+                    currentLine = edge.line,                        // 현재 노선 번호 업데이트
+                    lineNumbers = newLineNumbers
                 )
 
                 val existingInfo = distances[edge.destination]
@@ -96,13 +99,14 @@ class RouteFinder(private val graph: SubwayGraph) {
         val cost: Int,
         val transfers: Int,
         val path: List<Int>,
-        val currentLine: Int  // 현재 노선 번호를 저장하여 환승 여부 판단
+        val currentLine: Int,  // 현재 노선 번호를 저장하여 환승 여부 판단
+        val lineNumbers: List<Int> // 각 구간의 호선 번호 리스트
     ) {
         val criteria: MutableSet<String> = mutableSetOf() // 해당 경로가 최소 시간, 최소 비용, 최소 거리, 최소 환승 어떠한 것들에 해당되는지에 대한 정보
 
         override fun toString(): String {
             val criteriaStr = if (criteria.isNotEmpty()) "${criteria.joinToString(" / ")}  - " else ""
-            return "${criteriaStr}시간: ${time}초, 거리: ${distance}m, 비용: ${cost}원, 환승 횟수: $transfers, 경로: ${path.joinToString(" -> ")}"
+            return "${criteriaStr}시간: ${time}초, 거리: ${distance}m, 비용: ${cost}원, 환승 횟수: $transfers, 경로: ${path.joinToString(" -> ")}, 호선: ${lineNumbers.joinToString(" -> ")}"
         }
     }
 }
