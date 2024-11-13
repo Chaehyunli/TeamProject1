@@ -22,8 +22,10 @@ import com.example.myapplication.ui.components.StationInputField
 import kotlin.math.max
 import kotlin.math.min
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.sp
@@ -116,6 +118,8 @@ fun HomeScreen(navController: NavHostController) {
                     .clickable {
                         isFocused = true
                     }
+                    .border(1.dp, Color.Black, shape = RoundedCornerShape(16.dp)) // 테두리 추가
+
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -129,6 +133,7 @@ fun HomeScreen(navController: NavHostController) {
                     .size(48.dp)
                     .padding(start = 8.dp)
                     .background(Color(0xFF252F42), shape = CircleShape)
+                    .border(1.dp, Color(0xFFCBD2DF), shape = CircleShape) // 테두리 추가
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
