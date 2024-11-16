@@ -30,3 +30,27 @@ fun loadStationCoordinates(context: Context): Map<Int, Offset> {
     reader.close()
     return coordinates
 }
+
+// 연결 데이터를 파일에서 읽어오는 함수
+fun loadConnections(context: Context): List<Triple<Int, Int, Int>> {
+    val connections = mutableListOf<Triple<Int, Int, Int>>()
+    try {
+        context.assets.open("stations.txt").bufferedReader().useLines { lines ->
+            lines.forEach { line ->
+                val parts = line.split(",")
+                if (parts.size == 3) {
+                    val src = parts[0].toIntOrNull()
+                    val dst = parts[1].toIntOrNull()
+                    val lineNumber = parts[2].toIntOrNull()
+                    if (src != null && dst != null && lineNumber != null) {
+                        connections.add(Triple(src, dst, lineNumber))
+                    }
+                }
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return connections
+}
+

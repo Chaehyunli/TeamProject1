@@ -4,7 +4,6 @@ package com.example.myapplication
 import java.util.*
 import android.content.Context
 import kotlin.String
-import java.io.File
 
 //import com.example.myapplication.RouteFinder
 //import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
@@ -81,7 +80,7 @@ class SubwayGraph {
     // AssetManager를 이용해 파일을 로드하는 메소드
     fun loadDataFromAssets(context: Context) {
         try {
-            val inputStream = context.assets.open("stationns.txt")
+            val inputStream = context.assets.open("stations.txt")
             inputStream.bufferedReader().useLines { lines ->
                 lines.forEach { line ->
                     println("읽은 줄: $line")
