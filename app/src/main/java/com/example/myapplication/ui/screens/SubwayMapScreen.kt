@@ -2,6 +2,8 @@
 package com.example.myapplication.ui.screens
 
 import android.content.Context
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,7 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
@@ -19,6 +23,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.ui.components.loadStationCoordinates
+import com.example.myapplication.ui.components.loadConnections
 import androidx.compose.foundation.gestures.detectDragGestures
 
 @Composable
@@ -28,15 +33,32 @@ fun SubwayMapScreen(
 ) {
     val context = LocalContext.current
     val stationCoordinates = remember { loadStationCoordinates(context) }
+    val connections = remember { loadConnections(context) }
+
+    // 노선 번호에 따른 색상 맵
+    val lineColors = mapOf(
+        1 to Color(0xFF00b050), // 1호선
+        2 to Color(0xFF002060), // 2호선
+        3 to Color(0xFF953735), // 3호선
+        4 to Color(0xFFff0000), // 4호선
+        5 to Color(0xFF4a7ebb), // 5호선
+        6 to Color(0xFFffc003), // 6호선
+        7 to Color(0xFF92d050), // 7호선
+        8 to Color(0xFF00b0f0), // 8호선
+        9 to Color(0xFF7030a0) // 9호선
+    )
 
     // 확대 비율 고정
     val scale = 1.5f
 
-    // 지도 오프셋 변수
-    var offsetX by remember { mutableStateOf(0f) }
-    var offsetY by remember { mutableStateOf(0f) }
+    // 지도 오프셋 변수 (애니메이션 처리)
+    var rawOffsetX by remember { mutableStateOf(0f) }
+    var rawOffsetY by remember { mutableStateOf(0f) }
+    val offsetX by animateFloatAsState(targetValue = rawOffsetX) // 부드러운 X 이동
+    val offsetY by animateFloatAsState(targetValue = rawOffsetY) // 부드러운 Y 이동
 
-    // 밀도를 가져와서 Float 값을 Dp로 변환할 준비
+    var selectedStationId by remember { mutableStateOf<Int?>(null) } // 선택된 역 ID 상태
+
     val density = LocalDensity.current
 
     if (stationCoordinates.isEmpty()) {
@@ -51,8 +73,9 @@ fun SubwayMapScreen(
     LaunchedEffect(initialStationId) {
         if (initialStationId != null) {
             stationCoordinates[initialStationId]?.let { position ->
-                offsetX = screenCenterX - position.x * scale
-                offsetY = screenCenterY - position.y * scale - 200f
+                rawOffsetX = screenCenterX - position.x * scale
+                rawOffsetY = screenCenterY - position.y * scale - 200f
+                selectedStationId = initialStationId // 초기 선택된 역 설정
             }
         }
     }
@@ -64,8 +87,8 @@ fun SubwayMapScreen(
             .pointerInput(Unit) {
                 detectDragGestures { change, dragAmount ->
                     change.consume() // 드래그 이벤트 소비
-                    offsetX += dragAmount.x
-                    offsetY += dragAmount.y
+                    rawOffsetX += dragAmount.x
+                    rawOffsetY += dragAmount.y
                 }
             }
     ) {
@@ -84,6 +107,34 @@ fun SubwayMapScreen(
                     translationY = offsetY
                 )
         ) {
+            // 캔버스를 이용해 선 그리기
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                connections.forEach { (src, dst, lineNumber) ->
+                    val srcPosition = stationCoordinates[src]
+                    val dstPosition = stationCoordinates[dst]
+
+                    if (srcPosition != null && dstPosition != null) {
+                        // 반지름 값 계산
+                        val radius = (8 * scale).dp.toPx()
+
+                        // 시작점과 끝점을 원 중심으로 이동
+                        val adjustedStartX = srcPosition.x * scale + radius
+                        val adjustedStartY = srcPosition.y * scale + radius
+                        val adjustedEndX = dstPosition.x * scale + radius
+                        val adjustedEndY = dstPosition.y * scale + radius
+
+                        // 선 그리기
+                        drawLine(
+                            color = lineColors[lineNumber] ?: Color.Black,
+                            start = Offset(adjustedStartX, adjustedStartY),
+                            end = Offset(adjustedEndX, adjustedEndY),
+                            strokeWidth = 5.dp.toPx(),
+                            cap = StrokeCap.Round
+                        )
+                    }
+                }
+            }
+
             // 각 역을 표시하는 Box
             stationCoordinates.forEach { (stationId, position) ->
                 val scaledX = position.x * scale
@@ -101,14 +152,18 @@ fun SubwayMapScreen(
                         .offset(x = xOffset, y = yOffset)
                         .size(circleRadius * 2)
                         .border(1.dp, Color.Black, CircleShape)
-                        .background(Color(0xFFD9EAF7), CircleShape)
+                        .background(
+                            if (stationId == selectedStationId) Color.Red else Color(0xFFD9EAF7),
+                            CircleShape
+                        ) // 선택된 역에 대해 배경색 변경
                         .clickable {
                             // 선택된 역 번호 전달
                             onStationSelected(stationId)
+                            selectedStationId = stationId // 선택된 역 설정
 
-                            // 클릭된 역을 화면 중앙에 위치시키기 위해 오프셋 변경
-                            offsetX = screenCenterX - scaledX
-                            offsetY = screenCenterY - scaledY
+                            // 애니메이션이 적용된 오프셋 변경
+                            rawOffsetX = screenCenterX - scaledX
+                            rawOffsetY = screenCenterY - scaledY
                         }
                 ) {
                     Text(
@@ -118,9 +173,31 @@ fun SubwayMapScreen(
                     )
                 }
             }
+
+            // 선택된 역 주위에 빨간색 원 그리기
+            selectedStationId?.let { selectedId ->
+                val selectedPosition = stationCoordinates[selectedId]
+                if (selectedPosition != null) {
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        val centerX = selectedPosition.x * scale
+                        val centerY = selectedPosition.y * scale
+
+                        drawCircle(
+                            color = Color.Red,
+                            radius = (12 * scale).dp.toPx(),
+                            center = Offset(centerX + (8 * scale).dp.toPx(), centerY + (8 * scale).dp.toPx()),
+                            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx())
+                        )
+                    }
+                }
+            }
         }
     }
 }
+
+
+
+
 
 
 

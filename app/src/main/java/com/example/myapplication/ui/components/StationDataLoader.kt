@@ -38,10 +38,10 @@ fun loadConnections(context: Context): List<Triple<Int, Int, Int>> {
         context.assets.open("stations.txt").bufferedReader().useLines { lines ->
             lines.forEach { line ->
                 val parts = line.split(",")
-                if (parts.size == 3) {
+                if (parts.size == 6) {
                     val src = parts[0].toIntOrNull()
                     val dst = parts[1].toIntOrNull()
-                    val lineNumber = parts[2].toIntOrNull()
+                    val lineNumber = parts[5].toIntOrNull()
                     if (src != null && dst != null && lineNumber != null) {
                         connections.add(Triple(src, dst, lineNumber))
                     }
