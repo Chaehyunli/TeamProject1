@@ -65,25 +65,12 @@ fun StationDetailScreen(
         "환승할 수 없는 역입니다."
     }
 
-    // 초기 확대 및 위치 설정
-    var scale by remember { mutableStateOf(2f) }
-    var offsetX by remember { mutableStateOf(0f) }
-    var offsetY by remember { mutableStateOf(0f) }
-
-    val screenWidth = 1000f
-    val screenHeight = 1000f
-    val imageWidth = 860f
-    val imageHeight = 1000f
-
-    val maxOffsetX = (imageWidth * scale - screenWidth) / 2
-    val maxOffsetY = (imageHeight * scale - screenHeight) / 2
-
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(text = stationNameDisplay, fontSize = 18.sp, color = Color(0xFF252f42)) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = { navController.navigate("home")  }) { // HomeScreen으로 이동
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "뒤로가기")
                     }
                 },
@@ -98,28 +85,25 @@ fun StationDetailScreen(
                     .padding(paddingValues),
                 contentAlignment = Alignment.BottomCenter
             ) {
-                // 특정 역의 상세 정보를 볼 때만 노선도 배경 표시
+                // 호선 번호가 아닌 경우에만 노선도 표시
                 if (!isLineNumber) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .pointerInput(Unit) {
-                                detectTransformGestures { _, pan, _, _ ->
-                                    offsetX = (offsetX + pan.x).coerceIn(-maxOffsetX, maxOffsetX)
-                                    offsetY = (offsetY + pan.y).coerceIn(-maxOffsetY, maxOffsetY)
-                                }
+                    if (stationNumber != null) {
+                        SubwayMapScreen(
+                            initialStationId = stationNumber, // 선택된 역을 초기 중심 역으로 설정
+                            onStationSelected = { selectedStationId ->
+                                // 선택된 역이 있으면 화면 이동
+                                navController.navigate("stationDetail/$selectedStationId")
                             }
-                            .graphicsLayer(
-                                scaleX = scale,
-                                scaleY = scale,
-                                translationX = offsetX,
-                                translationY = offsetY,
-                            )
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.map_image),
-                            contentDescription = "지하철 노선도",
-                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        // 역 번호가 잘못된 경우 오류 메시지 표시
+                        Text(
+                            text = "유효하지 않은 역 정보입니다.",
+                            color = Color.Red,
+                            fontSize = 16.sp,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(16.dp)
                         )
                     }
                 }
@@ -161,6 +145,10 @@ fun StationDetailScreen(
         }
     )
 }
+
+
+
+
 
 
 

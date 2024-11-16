@@ -22,7 +22,10 @@ import com.example.myapplication.ui.components.loadStationCoordinates
 import androidx.compose.foundation.gestures.detectDragGestures
 
 @Composable
-fun SubwayMapScreen() {
+fun SubwayMapScreen(
+    initialStationId: Int? = null,
+    onStationSelected: (Int) -> Unit
+) {
     val context = LocalContext.current
     val stationCoordinates = remember { loadStationCoordinates(context) }
 
@@ -44,6 +47,15 @@ fun SubwayMapScreen() {
     // 핸드폰 화면 크기에서 중앙 좌표 계산
     var screenCenterX by remember { mutableStateOf(0f) }
     var screenCenterY by remember { mutableStateOf(0f) }
+
+    LaunchedEffect(initialStationId) {
+        if (initialStationId != null) {
+            stationCoordinates[initialStationId]?.let { position ->
+                offsetX = screenCenterX - position.x * scale
+                offsetY = screenCenterY - position.y * scale - 200f
+            }
+        }
+    }
 
     BoxWithConstraints(
         modifier = Modifier
@@ -91,7 +103,10 @@ fun SubwayMapScreen() {
                         .border(1.dp, Color.Black, CircleShape)
                         .background(Color(0xFFD9EAF7), CircleShape)
                         .clickable {
-                            // 정확한 오프셋 계산
+                            // 선택된 역 번호 전달
+                            onStationSelected(stationId)
+
+                            // 클릭된 역을 화면 중앙에 위치시키기 위해 오프셋 변경
                             offsetX = screenCenterX - scaledX
                             offsetY = screenCenterY - scaledY
                         }
@@ -106,7 +121,6 @@ fun SubwayMapScreen() {
         }
     }
 }
-
 
 
 
