@@ -1,7 +1,7 @@
 // WarningDialog.kt
 package com.example.myapplication.ui.components
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -64,7 +64,9 @@ fun WarningDialog(
             },
             containerColor = Color(0xFFCBD2DF),
             shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.widthIn(max = 300.dp) // 다이얼로그 자체의 최대 너비 조정
+            modifier = Modifier
+                .widthIn(max = 300.dp) // 다이얼로그 자체의 최대 너비 조정
+                .border(1.dp, Color.Black, RoundedCornerShape(12.dp))
         )
     }
 }

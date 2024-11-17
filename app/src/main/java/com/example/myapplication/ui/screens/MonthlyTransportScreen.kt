@@ -1,6 +1,7 @@
 // MonthlyTransportScreen.kt
 package com.example.myapplication.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,24 +20,22 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.myapplication.ui.components.BottomNavigationBar
 import java.text.DecimalFormat
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.border
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.draw.shadow
-import kotlin.math.log10
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.text.drawText
+import com.example.myapplication.ui.viewmodel.MonthlyTransportViewModel
 
 @Composable
-fun MonthlyTransportScreen(navController: NavHostController) {
-    var selectedItem by remember { mutableStateOf(2) }
+fun MonthlyTransportScreen(navController: NavHostController, viewModel: MonthlyTransportViewModel) {
+    val monthlyCosts by viewModel.monthlyCosts.collectAsState()
+
+    Log.d("MonthlyTransportScreen", "화면에 표시될 월별 교통비: $monthlyCosts")
 
     Scaffold(
         containerColor = Color.White,
@@ -44,9 +43,10 @@ fun MonthlyTransportScreen(navController: NavHostController) {
             BottomNavigationBar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(62.dp),
-                selectedItem = selectedItem,
-                onItemSelected = { selectedItem = it },
+                    .height(62.dp)
+                    .border(1.dp, Color.LightGray, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+                selectedItem = 2,
+                onItemSelected = { /* Handle item selection */ },
                 navController = navController
             )
         }
@@ -55,35 +55,31 @@ fun MonthlyTransportScreen(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                //.padding(16.dp),
-                .padding(horizontal = 16.dp, vertical = 8.dp), // 추가 여백을 조정,
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
-                MonthlyExpenseCard() // 현재 월을 전달
+                MonthlyExpenseCard(monthlyCosts) // 월별 교통비 데이터 전달
             }
             item {
-                RecentExpenseGraph()
+                RecentExpenseGraph(monthlyCosts)
             }
         }
     }
 }
 
 @Composable
-fun MonthlyExpenseCard() {
+fun MonthlyExpenseCard(monthlyCosts: Map<Int, Int>) {
     // 현재 월과 전월 계산
     val calendar = Calendar.getInstance()
-    val currentMonth = SimpleDateFormat("M", Locale.getDefault()).format(calendar.time) // 현재 월
+    val currentMonth = calendar.get(Calendar.MONTH) + 1
+    val previousMonth = currentMonth - 1
 
-    calendar.add(Calendar.MONTH, -1) // 한 달 전으로 설정
-    val previousMonth = SimpleDateFormat("M", Locale.getDefault()).format(calendar.time) // 전월
-
-    // 예시 교통비 금액 설정 (실제로는 데이터에서 받아와야 함)
-    val previousMonthAmount = 62000 // 전월 교통비 예시 값
-    val currentMonthAmount = 70000 // 현재 월 교통비 예시 값
-    val difference = kotlin.math.abs(previousMonthAmount - currentMonthAmount) // 차액 계산
-    val isSavings = currentMonthAmount < previousMonthAmount // 전달보다 이번달이 덜 썼으면 true, 더 썼으면 false
+    val currentMonthAmount = monthlyCosts[currentMonth] ?: 0
+    val previousMonthAmount = monthlyCosts[previousMonth] ?: 0
+    val difference = kotlin.math.abs(previousMonthAmount - currentMonthAmount)
+    val isSavings = currentMonthAmount < previousMonthAmount
 
     // 숫자 형식 포맷터
     val formatter = DecimalFormat("#,###")
@@ -104,7 +100,7 @@ fun MonthlyExpenseCard() {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "${formatter.format(currentMonthAmount)} 원", // 콤마 형식 적용
+            text = "${formatter.format(currentMonthAmount)} 원",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Black
@@ -124,19 +120,10 @@ fun MonthlyExpenseCard() {
             color = Color(0xFF252F42),
             fontWeight = FontWeight.Bold
         )
-
-        Spacer(modifier = Modifier.height(8.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .background(Color.White, shape = RoundedCornerShape(8.dp))
-        ) {
-            LineChart(dataPoints = listOf(50000, 62000, 70000, 62000, 70000), months = listOf("7월", "8월", "9월", "10월", "11월"))
-        }
     }
 }
 
+// 꺾은선 일단 보류
 @Composable
 fun LineChart(dataPoints: List<Int>, months: List<String>) {
     val maxDataValue = dataPoints.maxOrNull() ?: 1
@@ -186,23 +173,17 @@ fun LineChart(dataPoints: List<Int>, months: List<String>) {
 }
 
 @Composable
-fun RecentExpenseGraph() {
-    // 임의의 데이터 예시 (단위: 원)
-    val data = listOf(1000, 50000, 200000, 100000)
-    val maxDataValue = data.maxOrNull() ?: 0 // 데이터 중 최대값 (그래프 높이 기준)
-    val formatter = DecimalFormat("#,###") // 숫자 형식 포맷터
+fun RecentExpenseGraph(monthlyCosts: Map<Int, Int>) {
+    val sortedCosts = monthlyCosts.toSortedMap() // 월별로 정렬
+    val dataPoints = sortedCosts.values.toList()
+    val months = sortedCosts.keys.map { "${it}월" }
 
-    // 현재 월과 이전 월 구하기
-    val calendar = Calendar.getInstance()
-    val dateFormat = SimpleDateFormat("M", Locale.getDefault())
-    val months = List(data.size) { index ->
-        calendar.add(Calendar.MONTH, -index)
-        dateFormat.format(calendar.time).toInt()
-    }.reversed()
+    val maxDataValue = dataPoints.maxOrNull() ?: 1
+    val formatter = DecimalFormat("#,###")
 
+    // 막대 색상 리스트
     val colors = listOf(Color(0xFF5C7780), Color(0xFF6CAAE8), Color(0xFF252F42), Color(0xFF366F98))
 
-    // 바깥쪽 배경
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -211,16 +192,14 @@ fun RecentExpenseGraph() {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 제목 영역 - 바깥 배경 색상 사용
         Text(
             text = "최근 교통비 내역",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF252F42),
-            modifier = Modifier.padding(bottom = 8.dp) // 제목과 그래프 간격 조정
+            modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        // 안쪽 흰색 배경의 그래프 영역
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -230,7 +209,6 @@ fun RecentExpenseGraph() {
         ) {
             Spacer(modifier = Modifier.height(8.dp))
 
-            // 그래프 캔버스
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -238,11 +216,11 @@ fun RecentExpenseGraph() {
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                data.forEachIndexed { index, value ->
+                dataPoints.forEachIndexed { index, value ->
                     val maxBarHeight = 120.dp
-                    val barHeightRatio = log10(value.toFloat() + 10) / log10(maxDataValue.toFloat() + 10)
-                    val barHeight = (maxBarHeight * barHeightRatio).coerceAtMost(maxBarHeight)
-                    val barColor = colors[index % colors.size]
+                    val barHeightRatio = value.toFloat() / maxDataValue
+                    val barHeight = maxBarHeight * barHeightRatio
+                    val barColor = colors[index % colors.size] // 색상 리스트를 순환
 
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -269,10 +247,9 @@ fun RecentExpenseGraph() {
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "${months[index]}월",
+                            text = months[index],
                             fontSize = 12.sp,
-                            color = Color(0xFF252F42),
-                            modifier = Modifier.padding(top = 1.dp)
+                            color = Color(0xFF252F42)
                         )
                     }
                 }

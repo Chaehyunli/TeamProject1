@@ -32,7 +32,6 @@ import com.example.myapplication.SubwayGraphInstance
 import com.example.myapplication.ui.components.RouteInputField
 import com.example.myapplication.ui.components.WarningDialog
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RouteSearchScreen(
     navController: NavController,
@@ -223,27 +222,40 @@ fun RouteSearchScreen(
                     )?.forEachIndexed { index, route ->
                         Text(
                             text = """
-                    경로: ${route.path.joinToString(" -> ")}
-                    기준: ${route.criteria.joinToString(", ")}
-                    총 시간: ${route.time}초
-                    총 거리: ${route.distance}m
-                    환승 횟수: ${route.transfers}회
-                    총 비용: ${route.cost}원
-                """.trimIndent(),
+                            경로: ${route.path.joinToString(" -> ")}
+                            기준: ${route.criteria.joinToString(", ")}
+                            총 시간: ${route.time}초
+                            총 거리: ${route.distance}m
+                            환승 횟수: ${route.transfers}회
+                            총 비용: ${route.cost}원
+                        """.trimIndent(),
                             modifier = Modifier
                                 .padding(8.dp)
                                 .clickable {
                                     // 각 필드를 개별 문자열로 전달
                                     val path = route.path.joinToString(",")
-                                    val criteria = route.criteria.joinToString(",")
                                     val time = route.time
                                     val distance = route.distance
                                     val transfers = route.transfers
                                     val cost = route.cost
 
-                                    // NavController에 전달
+                                    // lineNumbers를 경로 길이에 맞게 조정
+                                    val adjustedLineNumbers = if (route.lineNumbers.size >= route.path.size - 1) {
+                                        route.lineNumbers.subList(0, route.path.size - 1)
+                                    } else {
+                                        route.lineNumbers + List(route.path.size - 1 - route.lineNumbers.size) { -1 }
+                                    }
+
+                                    val lineNumbers = adjustedLineNumbers.joinToString(",")
+
+                                    // 환승역 목록 생성 및 문자열로 변환
+                                    val transferStations = route.path.filterIndexed { idx, _ ->
+                                        idx > 0 && adjustedLineNumbers.getOrNull(idx) != adjustedLineNumbers.getOrNull(idx - 1)
+                                    }.joinToString(",")
+
+                                    // 경로 상세 화면으로 이동
                                     navController.navigate(
-                                        "routeDetail/$path/$criteria/$time/$distance/$transfers/$cost"
+                                        "routeDetail/$path/$transferStations/$time/$distance/$transfers/$cost/$lineNumbers"
                                     )
                                 },
                             color = Color.DarkGray,

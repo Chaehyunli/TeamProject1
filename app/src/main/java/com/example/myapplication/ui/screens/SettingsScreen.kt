@@ -2,8 +2,10 @@
 package com.example.myapplication.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.*
@@ -26,7 +28,8 @@ fun SettingsScreen(navController: NavHostController) {
             BottomNavigationBar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(62.dp),
+                    .height(62.dp)
+                    .border(1.dp, Color.LightGray, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
                 selectedItem = selectedItem,
                 onItemSelected = { selectedItem = it },
                 navController = navController

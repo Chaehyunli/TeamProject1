@@ -1,6 +1,7 @@
 // StationDetailDialog.kt
 package com.example.myapplication.ui.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -25,7 +26,8 @@ fun StationDetailDialog(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(bottom = 0.dp),
+            .padding(bottom = 0.dp)
+            .border(1.dp, Color.LightGray, shape = RoundedCornerShape(8.dp)),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(
@@ -40,7 +42,7 @@ fun StationDetailDialog(
                 color = Color(0xFFF97373)
             )
             Spacer(modifier = Modifier.height(10.dp))
-            Divider(color = Color(0xFF808590), thickness = 0.5.dp)
+            Divider(color = Color(0xFF808590), thickness = 1.dp)
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = transferInfo,
@@ -56,7 +58,7 @@ fun StationDetailDialog(
                 lineHeight = 20.sp,
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Divider(color = Color(0xFF808590), thickness = 0.5.dp)
+            Divider(color = Color(0xFF808590), thickness = 1.dp)
             Spacer(modifier = Modifier.height(10.dp))
 
             // 출발/도착 버튼
