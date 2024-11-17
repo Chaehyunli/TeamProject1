@@ -24,10 +24,6 @@ import com.example.myapplication.ui.viewmodel.SampleDataViewModel
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        SubwayGraphInstance.initialize(this)  // 이 줄이 가장 먼저 위치해야 합니다.
-        Log.d("MainActivity", "SubwayGraph 데이터가 로드됨")
-
         setContent {
             MyApplicationTheme {
                 val navController = rememberNavController() // NavHostController 얻기

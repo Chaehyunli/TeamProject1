@@ -20,6 +20,7 @@ class SplashActivity : AppCompatActivity() {
                 // 데이터 로드가 완료되면 MainActivity로 전환
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out) // 전환 애니메이션
                 finish() // SplashActivity 종료하여 스택에서 제거
             }
         }.start()
