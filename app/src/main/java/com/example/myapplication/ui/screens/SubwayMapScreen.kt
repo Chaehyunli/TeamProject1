@@ -1,6 +1,3 @@
-// SubwayMapScreen.kt
-package com.example.myapplication.ui.screens
-
 import android.content.Context
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
@@ -30,7 +27,9 @@ import androidx.compose.foundation.gestures.detectDragGestures
 fun SubwayMapScreen(
     initialStationId: Int? = null,
     onStationSelected: (Int) -> Unit,
-    lockSelection: Boolean = false // MeetingPlaceResultScreen.kt 에서 다른 역 선택하면 강조 표시 바뀌어서 추가
+    lockSelection: Boolean = false, // MeetingPlaceResultScreen.kt 에서 다른 역 선택하면 강조 표시 바뀌어서 추가
+    centerOffset: Offset = Offset(0f, 0f),
+    meetingPlace: Boolean = false,
 ) {
     val context = LocalContext.current
     val stationCoordinates = remember { loadStationCoordinates(context) }
@@ -74,8 +73,15 @@ fun SubwayMapScreen(
     LaunchedEffect(initialStationId) {
         if (initialStationId != null) {
             stationCoordinates[initialStationId]?.let { position ->
-                rawOffsetX = screenCenterX - position.x * scale
-                rawOffsetY = screenCenterY - position.y * scale - 200f
+                if (meetingPlace) {
+                    // MeetingPlaceResultScreen 전용 중심 좌표 계산
+                    rawOffsetX = centerOffset.x - position.x * scale
+                    rawOffsetY = centerOffset.y - position.y * scale
+                } else {
+                    // 기존 HomeScreen 계산법
+                    rawOffsetX = screenCenterX - position.x * scale
+                    rawOffsetY = screenCenterY - position.y * scale - 200f
+                }
                 selectedStationId = initialStationId // 초기 선택된 역 설정
             }
         }

@@ -1,6 +1,7 @@
 // HomeScreen.kt
 package com.example.myapplication.ui.screens
 
+import SubwayMapScreen
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NearMe
@@ -44,9 +45,9 @@ fun HomeScreen(navController: NavHostController) {
         // SubwayMapScreen
         SubwayMapScreen(
             onStationSelected = { selectedStationId ->
-            // 선택된 역의 상세 화면으로 바로 이동
-            // 원래 입력 필드에 입력되고 이동 되는거 바로 이동하게 함
-            navController.navigate("stationDetail/$selectedStationId")
+                // 선택된 역의 상세 화면으로 바로 이동
+                // 원래 입력 필드에 입력되고 이동 되는거 바로 이동하게 함
+                navController.navigate("stationDetail/$selectedStationId")
             },
             lockSelection = false
         )
@@ -118,6 +119,5 @@ fun HomeScreen(navController: NavHostController) {
         )
     }
 }
-
 
 

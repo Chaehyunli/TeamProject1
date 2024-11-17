@@ -1,6 +1,7 @@
 // MeetingPlaceResultScreen.kt
 package com.example.myapplication.ui.screens
 
+import SubwayMapScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -10,16 +11,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.geometry.Offset
 
 import com.example.myapplication.ui.components.BottomNavigationBar
 
@@ -65,15 +66,23 @@ fun MeetingPlaceResultScreen(
             )
         }
     ) { innerPadding ->
-        Box(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            // 현재 화면 중심 좌표 계산
+            val centerOffset = Offset(
+                x = constraints.maxWidth / 2f,
+                y = constraints.maxHeight / 2f
+            )
+
             SubwayMapScreen(
                 initialStationId = bestStation,
                 onStationSelected = { /* 아무 동작도 하지 않음 */ },
-                lockSelection = true
+                lockSelection = true,
+                centerOffset = centerOffset,
+                meetingPlace = true // 약속장소 전용 플래그 전달
             )
 
             // 추천 장소 정보 카드
