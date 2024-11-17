@@ -20,21 +20,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.myapplication.ui.components.BottomNavigationBar
 import java.text.DecimalFormat
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.draw.shadow
-import kotlin.math.log10
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.text.drawText
 import com.example.myapplication.ui.viewmodel.MonthlyTransportViewModel
 
 @Composable

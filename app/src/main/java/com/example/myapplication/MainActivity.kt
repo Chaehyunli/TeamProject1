@@ -31,7 +31,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
                 val navController = rememberNavController() // NavHostController 얻기
-                var selectedItem by remember { mutableStateOf(0) }
 
                 // SampleDataViewModel을 생성하여 초기화
                 val sampleDataViewModel: SampleDataViewModel = viewModel()
@@ -39,13 +38,6 @@ class MainActivity : ComponentActivity() {
                 Column(modifier = Modifier.fillMaxSize()) {
                     // 네비게이션 호스트
                     AppNavHost(navController = navController)
-
-                    // 하단 네비게이션 바
-                    BottomNavigationBar(
-                        selectedItem = selectedItem,
-                        onItemSelected = { selectedItem = it },
-                        navController = navController,
-                    )
                 }
             }
         }

@@ -19,7 +19,6 @@ import androidx.navigation.NavHostController
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.geometry.Offset
 
 import com.example.myapplication.ui.components.BottomNavigationBar

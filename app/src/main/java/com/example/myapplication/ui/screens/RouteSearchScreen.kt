@@ -32,7 +32,6 @@ import com.example.myapplication.SubwayGraphInstance
 import com.example.myapplication.ui.components.RouteInputField
 import com.example.myapplication.ui.components.WarningDialog
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RouteSearchScreen(
     navController: NavController,
