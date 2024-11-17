@@ -2,10 +2,12 @@
 package com.example.myapplication.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -74,7 +76,8 @@ fun StationDetailScreen(
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "뒤로가기")
                     }
                 },
-                modifier = Modifier,
+                modifier = Modifier
+                    .border(1.dp, Color.LightGray),
                 colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White),
             )
         },
@@ -145,13 +148,3 @@ fun StationDetailScreen(
         }
     )
 }
-
-
-
-
-
-
-
-
-
-

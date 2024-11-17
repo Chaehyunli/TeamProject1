@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.border
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.draw.shadow
@@ -48,7 +49,8 @@ fun MonthlyTransportScreen(navController: NavHostController, viewModel: MonthlyT
             BottomNavigationBar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(62.dp),
+                    .height(62.dp)
+                    .border(1.dp, Color.LightGray, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
                 selectedItem = 2,
                 onItemSelected = { /* Handle item selection */ },
                 navController = navController

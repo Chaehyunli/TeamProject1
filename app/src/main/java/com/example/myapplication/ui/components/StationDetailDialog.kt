@@ -1,6 +1,7 @@
 // StationDetailDialog.kt
 package com.example.myapplication.ui.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -25,7 +26,8 @@ fun StationDetailDialog(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(bottom = 0.dp),
+            .padding(bottom = 0.dp)
+            .border(1.dp, Color.LightGray, shape = RoundedCornerShape(8.dp)), // 테두리 추가
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(

@@ -29,7 +29,8 @@ import androidx.compose.foundation.gestures.detectDragGestures
 @Composable
 fun SubwayMapScreen(
     initialStationId: Int? = null,
-    onStationSelected: (Int) -> Unit
+    onStationSelected: (Int) -> Unit,
+    lockSelection: Boolean = false // MeetingPlaceResultScreen.kt 에서 다른 역 선택하면 강조 표시 바뀌어서 추가
 ) {
     val context = LocalContext.current
     val stationCoordinates = remember { loadStationCoordinates(context) }
@@ -37,15 +38,15 @@ fun SubwayMapScreen(
 
     // 노선 번호에 따른 색상 맵
     val lineColors = mapOf(
-        1 to Color(0xFF00b050), // 1호선
+        1 to Color(0xFF00B050), // 1호선
         2 to Color(0xFF002060), // 2호선
         3 to Color(0xFF953735), // 3호선
-        4 to Color(0xFFff0000), // 4호선
-        5 to Color(0xFF4a7ebb), // 5호선
-        6 to Color(0xFFffc003), // 6호선
-        7 to Color(0xFF92d050), // 7호선
-        8 to Color(0xFF00b0f0), // 8호선
-        9 to Color(0xFF7030a0) // 9호선
+        4 to Color(0xFFFF0000), // 4호선
+        5 to Color(0xFF4A7EBB), // 5호선
+        6 to Color(0xFFFFC514), // 6호선
+        7 to Color(0xFF92D050), // 7호선
+        8 to Color(0xFF00B0F0), // 8호선
+        9 to Color(0xFF7030A0) // 9호선
     )
 
     // 확대 비율 고정
@@ -156,7 +157,7 @@ fun SubwayMapScreen(
                             if (stationId == selectedStationId) Color.Red else Color(0xFFD9EAF7),
                             CircleShape
                         ) // 선택된 역에 대해 배경색 변경
-                        .clickable {
+                        .clickable(enabled = !lockSelection) {
                             // 선택된 역 번호 전달
                             onStationSelected(stationId)
                             selectedStationId = stationId // 선택된 역 설정
@@ -194,30 +195,3 @@ fun SubwayMapScreen(
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

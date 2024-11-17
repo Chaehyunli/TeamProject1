@@ -1,5 +1,4 @@
 // HomeScreen.kt
-// HomeScreen.kt
 package com.example.myapplication.ui.screens
 
 import androidx.compose.foundation.layout.*
@@ -43,10 +42,14 @@ fun HomeScreen(navController: NavHostController) {
             .fillMaxSize()
     ) {
         // SubwayMapScreen
-        SubwayMapScreen(onStationSelected = { selectedStationId ->
-            searchText = selectedStationId.toString() // 선택된 역 번호를 검색창으로 설정
-            triggerSearch = true // 검색 버튼 자동 클릭
-        })
+        SubwayMapScreen(
+            onStationSelected = { selectedStationId ->
+            // 선택된 역의 상세 화면으로 바로 이동
+            // 원래 입력 필드에 입력되고 이동 되는거 바로 이동하게 함
+            navController.navigate("stationDetail/$selectedStationId")
+            },
+            lockSelection = false
+        )
 
         // 검색 바와 길찾기 버튼
         Row(
@@ -65,6 +68,7 @@ fun HomeScreen(navController: NavHostController) {
                 onSearchClick = {
                     if (searchText.isBlank()) {
                         showDialog = true
+                        focusManager.clearFocus()
                     } else {
                         navController.navigate("stationDetail/$searchText")
                     }
@@ -106,7 +110,8 @@ fun HomeScreen(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .height(62.dp),
+                .height(62.dp)
+                .border(1.dp, Color.LightGray, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
             selectedItem = selectedItem,
             onItemSelected = { selectedItem = it },
             navController = navController

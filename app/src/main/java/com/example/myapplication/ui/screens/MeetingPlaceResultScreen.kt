@@ -2,6 +2,7 @@
 package com.example.myapplication.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -18,11 +19,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 import com.example.myapplication.ui.components.BottomNavigationBar
 
-// MeetingPlaceResultScreen.kt
-@OptIn(ExperimentalMaterial3Api::class) // 실험적 API 사용 경고 무시
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MeetingPlaceResultScreen(
     navController: NavHostController,
@@ -30,23 +31,8 @@ fun MeetingPlaceResultScreen(
     inputFields: List<String>
 ) {
     var selectedItem by remember { mutableStateOf(1) } // 현재 선택된 BottomNavigation 아이템 (약속장소 추천)
-
-    val meetingPlaceResult = result
-    val bestStation = meetingPlaceResult.bestStation
-    val timesFromStartStations = meetingPlaceResult.timesFromStartStations
-
-    // 소요 시간을 시간, 분, 초로 변환하는 함수
-    fun formatTime(seconds: Int): String {
-        val hours = seconds / 3600
-        val minutes = (seconds % 3600) / 60
-        val remainingSeconds = seconds % 60
-
-        return when {
-            hours > 0 -> "${hours}시간 ${minutes}분 ${String.format("%02d", remainingSeconds)}초"
-            minutes > 0 -> "${minutes}분 ${String.format("%02d", remainingSeconds)}초"
-            else -> "${String.format("%02d", remainingSeconds)}초"
-        }
-    }
+    val bestStation = result.bestStation
+    val timesFromStartStations = result.timesFromStartStations
 
     Scaffold(
         containerColor = Color.White,
@@ -64,60 +50,70 @@ fun MeetingPlaceResultScreen(
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = Color.White
                 ),
-                modifier = Modifier.shadow(4.dp) // 그림자 추가
+                modifier = Modifier.border(1.dp, Color.LightGray)
             )
         },
         bottomBar = {
             BottomNavigationBar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(62.dp),
+                    .height(62.dp)
+                    .border(1.dp, Color.LightGray, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
                 selectedItem = selectedItem,
                 onItemSelected = { selectedItem = it },
                 navController = navController
             )
         }
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
-                .padding(innerPadding)
                 .fillMaxSize()
-                .padding(16.dp)
-                .background(Color.White),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(innerPadding)
         ) {
-            Text(
-                text = "추천 약속장소...",
-                fontSize = 18.sp,
-                color = Color.Gray,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Text(
-                text = bestStation.toString(),
-                fontSize = 48.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+            SubwayMapScreen(
+                initialStationId = bestStation,
+                onStationSelected = { /* 아무 동작도 하지 않음 */ },
+                lockSelection = true
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // 각 출발지 소요 시간 표시
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                inputFields.forEachIndexed { index, field ->
-                    val time = timesFromStartStations.getOrNull(index) ?: 0
-                    Text(
-                        text = "출발지: $field, 소요시간: ${formatTime(time)}",
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Center, // 출발지 텍스트 왼쪽 정렬
-                        modifier = Modifier.fillMaxWidth()
+            // 추천 장소 정보 카드
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = Color(0xFFF3F4F6).copy(alpha = 0.9f), // 불투명 배경 추가
+                        shape = RoundedCornerShape(12.dp)
                     )
+                    .padding(16.dp)
+                    .align(Alignment.TopCenter)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "추천 약속장소: $bestStation",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    timesFromStartStations.forEachIndexed { index, time ->
+                        Text(
+                            text = "출발지: ${inputFields[index]}, 소요시간: ${formatTime(time)}",
+                            fontSize = 16.sp,
+                            color = Color.Gray
+                        )
+                    }
                 }
             }
         }
-
     }
+}
+
+// 소요 시간을 시간, 분, 초로 변환하는 함수
+fun formatTime(seconds: Int): String {
+    val minutes = seconds / 60
+    val remainingSeconds = seconds % 60
+    return "${minutes}분 ${String.format("%02d", remainingSeconds)}초"
 }

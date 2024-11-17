@@ -7,7 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -36,8 +36,11 @@ fun RouteDetailScreen(
     onBack: () -> Unit,
     viewModel: RouteDetailViewModel
 ) {
+    var isButtonVisible by remember { mutableStateOf(true) } // 버튼 가시성 상태 추가
+
     fun onButtonClick() {
         viewModel.addCost(cost) // 선택한 요금을 기존 교통비에 더하기
+        isButtonVisible = false // 버튼을 숨김
     }
 
     // 시간, 분, 초 계산
@@ -77,7 +80,7 @@ fun RouteDetailScreen(
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = Color.White
                 ),
-                modifier = Modifier.shadow(4.dp)
+                modifier = Modifier.border(1.dp, Color.LightGray)
             )
         },
         content = { innerPadding ->
@@ -175,34 +178,36 @@ fun RouteDetailScreen(
                     }
                 }
 
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(16.dp)
-                        .shadow(8.dp, shape = RoundedCornerShape(16.dp))
-                        .background(Color(0xFF242F42), shape = RoundedCornerShape(16.dp))
-                        .border(2.dp, Color(0xFFCBD2DF), RoundedCornerShape(16.dp)) // 테두리 설정
-                        .clickable { onButtonClick() }
-                        .wrapContentSize() // 내부 콘텐츠 크기에 맞춤
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp) // 패딩 조정
+                if (isButtonVisible) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(16.dp)
+                            .shadow(8.dp, shape = RoundedCornerShape(16.dp))
+                            .background(Color(0xFF242F42), shape = RoundedCornerShape(16.dp))
+                            .border(2.dp, Color(0xFFCBD2DF), RoundedCornerShape(16.dp))
+                            .clickable { onButtonClick() }
+                            .wrapContentSize()
                     ) {
-                        Text(
-                            text = "이 경로로 선택하기",
-                            color = Color(0xFFCBD2DF),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(modifier = Modifier.width(4.dp)) // 텍스트와 아이콘 사이 간격 추가
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = "Check Circle Icon",
-                            tint = Color(0xFFCBD2DF), // 아이콘 색상 설정
-                            modifier = Modifier.size(16.dp) // 아이콘 크기를 텍스트 크기에 맞춤
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                        ) {
+                            Text(
+                                text = "이 경로로 선택하기",
+                                color = Color(0xFFCBD2DF),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                imageVector = Icons.Default.CheckCircle,
+                                contentDescription = "Check Circle Icon",
+                                tint = Color(0xFFCBD2DF),
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
                     }
                 }
             }
