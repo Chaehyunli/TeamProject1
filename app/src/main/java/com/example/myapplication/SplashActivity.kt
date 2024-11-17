@@ -6,23 +6,30 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.MainActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        // 비동기로 데이터 초기화
-        Thread {
-            SubwayGraphInstance.initialize(this)  // 초기화 작업
-            runOnUiThread {
-                // 데이터 로드가 완료되면 MainActivity로 전환
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out) // 전환 애니메이션
-                finish() // SplashActivity 종료하여 스택에서 제거
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                SubwayGraphInstance.initialize(this@SplashActivity)
+                SubwayMapDataInstance.initialize(this@SplashActivity) // 데이터 초기화
             }
-        }.start()
+            startMainActivity()
+        }
+    }
+
+    private fun startMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        finish()
     }
 }

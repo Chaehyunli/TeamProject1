@@ -15,13 +15,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.myapplication.ui.components.loadStationCoordinates
-import com.example.myapplication.ui.components.loadConnections
 import androidx.compose.foundation.gestures.detectDragGestures
+import com.example.myapplication.SubwayMapDataInstance
+import com.example.myapplication.ui.components.getLineColor
 
 @Composable
 fun SubwayMapScreen(
@@ -31,22 +30,8 @@ fun SubwayMapScreen(
     centerOffset: Offset = Offset(0f, 0f),
     meetingPlace: Boolean = false,
 ) {
-    val context = LocalContext.current
-    val stationCoordinates = remember { loadStationCoordinates(context) }
-    val connections = remember { loadConnections(context) }
-
-    // 노선 번호에 따른 색상 맵
-    val lineColors = mapOf(
-        1 to Color(0xFF00B050), // 1호선
-        2 to Color(0xFF002060), // 2호선
-        3 to Color(0xFF953735), // 3호선
-        4 to Color(0xFFFF0000), // 4호선
-        5 to Color(0xFF4A7EBB), // 5호선
-        6 to Color(0xFFFFC514), // 6호선
-        7 to Color(0xFF92D050), // 7호선
-        8 to Color(0xFF00B0F0), // 8호선
-        9 to Color(0xFF7030A0) // 9호선
-    )
+    val stationCoordinates = SubwayMapDataInstance.stationCoordinates
+    val connections = SubwayMapDataInstance.connections
 
     // 확대 비율 고정
     val scale = 1.5f
@@ -132,7 +117,7 @@ fun SubwayMapScreen(
 
                         // 선 그리기
                         drawLine(
-                            color = lineColors[lineNumber] ?: Color.Black,
+                            color = getLineColor(lineNumber),
                             start = Offset(adjustedStartX, adjustedStartY),
                             end = Offset(adjustedEndX, adjustedEndY),
                             strokeWidth = 5.dp.toPx(),
