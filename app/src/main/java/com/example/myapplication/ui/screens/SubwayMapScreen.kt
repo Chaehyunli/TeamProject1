@@ -64,8 +64,8 @@ fun SubwayMapScreen(
                     rawOffsetY = centerOffset.y - position.y * scale
                 } else {
                     // 기존 HomeScreen 계산법
-                    rawOffsetX = screenCenterX - position.x * scale
-                    rawOffsetY = screenCenterY - position.y * scale - 200f
+                    rawOffsetX = screenCenterX - position.x * scale - 15f
+                    rawOffsetY = screenCenterY - position.y * scale - 275f
                 }
                 selectedStationId = initialStationId // 초기 선택된 역 설정
             }
