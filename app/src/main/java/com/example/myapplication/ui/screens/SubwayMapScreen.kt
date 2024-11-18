@@ -1,5 +1,4 @@
-// SubwayMapScreen.kt
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,7 +25,7 @@ import com.example.myapplication.ui.components.getLineColor
 fun SubwayMapScreen(
     initialStationId: Int? = null,
     onStationSelected: (Int) -> Unit,
-    lockSelection: Boolean = false, // MeetingPlaceResultScreen.kt 에서 다른 역 선택하면 강조 표시 바뀌어서 추가
+    lockSelection: Boolean = false,
     centerOffset: Offset = Offset(0f, 0f),
     meetingPlace: Boolean = false,
 ) {
@@ -145,7 +144,7 @@ fun SubwayMapScreen(
                         .size(circleRadius * 2)
                         .border(1.dp, Color.Black, CircleShape)
                         .background(
-                            if (stationId == selectedStationId) Color.Red else Color(0xFFD9EAF7),
+                            if (stationId == selectedStationId) Color(0xFFFF9800) else Color(0xFFD9EAF7),
                             CircleShape
                         ) // 선택된 역에 대해 배경색 변경
                         .clickable(enabled = !lockSelection) {
@@ -166,19 +165,36 @@ fun SubwayMapScreen(
                 }
             }
 
-            // 선택된 역 주위에 빨간색 원 그리기
             selectedStationId?.let { selectedId ->
                 val selectedPosition = stationCoordinates[selectedId]
                 if (selectedPosition != null) {
+                    // LocalDensity 사용
+                    val density = LocalDensity.current
+
+                    // 애니메이션 값 생성
+                    val infiniteTransition = rememberInfiniteTransition()
+                    val animatedRadius = infiniteTransition.animateFloat(
+                        initialValue = with(density) { (12 * scale).dp.toPx() }, // LocalDensity로 변환
+                        targetValue = with(density) { (20 * scale).dp.toPx() }, // LocalDensity로 변환
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 1200, easing = LinearEasing),
+                            repeatMode = RepeatMode.Reverse
+                        )
+                    )
+
                     Canvas(modifier = Modifier.fillMaxSize()) {
                         val centerX = selectedPosition.x * scale
                         val centerY = selectedPosition.y * scale
 
+                        // 애니메이션 효과 원 그리기
                         drawCircle(
-                            color = Color.Red,
-                            radius = (12 * scale).dp.toPx(),
-                            center = Offset(centerX + (8 * scale).dp.toPx(), centerY + (8 * scale).dp.toPx()),
-                            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx())
+                            color = Color.Red.copy(alpha = 0.5f),
+                            radius = animatedRadius.value,
+                            center = Offset(
+                                centerX + with(density) { (8 * scale).dp.toPx() },
+                                centerY + with(density) { (8 * scale).dp.toPx() }
+                            ),
+                            style = androidx.compose.ui.graphics.drawscope.Stroke(width = with(density) { 3.dp.toPx() })
                         )
                     }
                 }
@@ -186,3 +202,4 @@ fun SubwayMapScreen(
         }
     }
 }
+
