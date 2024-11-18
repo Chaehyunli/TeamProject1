@@ -144,7 +144,7 @@ fun SubwayMapScreen(
                         .size(circleRadius * 2)
                         .border(1.dp, Color.Black, CircleShape)
                         .background(
-                            if (stationId == selectedStationId) Color(0xFFFF9800) else Color(0xFFD9EAF7),
+                            if (stationId == selectedStationId) Color(0xFF4585F4) else Color(0xFFD9EAF7),
                             CircleShape
                         ) // 선택된 역에 대해 배경색 변경
                         .clickable(enabled = !lockSelection) {
@@ -188,7 +188,7 @@ fun SubwayMapScreen(
 
                         // 애니메이션 효과 원 그리기
                         drawCircle(
-                            color = Color.Red.copy(alpha = 0.5f),
+                            color = Color(0xFF4585F4).copy(alpha = 0.5f),
                             radius = animatedRadius.value,
                             center = Offset(
                                 centerX + with(density) { (8 * scale).dp.toPx() },

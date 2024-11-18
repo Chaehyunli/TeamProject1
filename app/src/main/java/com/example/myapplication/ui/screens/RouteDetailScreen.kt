@@ -19,6 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.myapplication.ui.components.ConfirmationDialog
+import com.example.myapplication.ui.components.getLineColor
 import com.example.myapplication.ui.viewmodel.RouteDetailViewModel
 import java.text.NumberFormat
 import java.util.Locale
@@ -37,10 +39,16 @@ fun RouteDetailScreen(
     viewModel: RouteDetailViewModel
 ) {
     var isButtonVisible by remember { mutableStateOf(true) } // 버튼 가시성 상태 추가
+    var showDialog by remember { mutableStateOf(false) } // 다이얼로그 표시 상태
 
-    fun onButtonClick() {
+    fun onConfirm() {
         viewModel.addCost(cost) // 선택한 요금을 기존 교통비에 더하기
         isButtonVisible = false // 버튼을 숨김
+        showDialog = false // 다이얼로그 닫기
+    }
+
+    fun onCancel() {
+        showDialog = false // 다이얼로그 닫기
     }
 
     // 시간, 분, 초 계산
@@ -186,7 +194,7 @@ fun RouteDetailScreen(
                             .shadow(8.dp, shape = RoundedCornerShape(16.dp))
                             .background(Color(0xFF242F42), shape = RoundedCornerShape(16.dp))
                             .border(2.dp, Color(0xFFCBD2DF), RoundedCornerShape(16.dp))
-                            .clickable { onButtonClick() }
+                            .clickable { showDialog = true }
                             .wrapContentSize()
                     ) {
                         Row(
@@ -211,22 +219,14 @@ fun RouteDetailScreen(
                     }
                 }
             }
+
+            if (showDialog) {
+                ConfirmationDialog(
+                    message = "이 경로를 선택하시겠습니까?",
+                    onConfirm = { onConfirm() }, // 확인 클릭 시 동작
+                    onCancel = { onCancel() }   // 취소 클릭 시 동작
+                )
+            }
         }
     )
-}
-
-// 각 호선에 따른 색상 반환 함수
-fun getLineColor(lineNumber: Int): Color {
-    return when (lineNumber) {
-        1 -> Color(0xFF00B050)
-        2 -> Color(0xFF002060)
-        3 -> Color(0xFF953735)
-        4 -> Color(0xFFFF0000)
-        5 -> Color(0xFF4A7EBB)
-        6 -> Color(0xFFFFC514)
-        7 -> Color(0xFF92D050)
-        8 -> Color(0xFF00B0F0)
-        9 -> Color(0xFF7030A0)
-        else -> Color.Gray
-    }
 }
