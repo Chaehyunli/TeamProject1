@@ -145,7 +145,7 @@ fun SubwayMapScreen(
                         .size(circleRadius * 2)
                         .border(1.dp, Color.Black, CircleShape)
                         .background(
-                            if (stationId == selectedStationId) Color.Red else Color(0xFFD9EAF7),
+                            if (stationId == selectedStationId) Color(0xFFEAB5E0) else Color(0xFFD9EAF7),
                             CircleShape
                         ) // 선택된 역에 대해 배경색 변경
                         .clickable(enabled = !lockSelection) {
@@ -175,7 +175,7 @@ fun SubwayMapScreen(
                         val centerY = selectedPosition.y * scale
 
                         drawCircle(
-                            color = Color.Red,
+                            color = Color(0xFFEAB5E0),
                             radius = (12 * scale).dp.toPx(),
                             center = Offset(centerX + (8 * scale).dp.toPx(), centerY + (8 * scale).dp.toPx()),
                             style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx())
