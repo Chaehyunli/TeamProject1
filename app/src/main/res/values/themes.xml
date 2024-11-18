@@ -5,7 +5,7 @@
         <item name="colorPrimary">@color/gray</item>
         <item name="colorPrimaryDark">@color/gray</item>
         <item name="colorAccent">@color/teal_200</item>
-        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowBackground">@color/ic_launcher_background</item>
     </style>
 
     <!-- 스플래시 화면 테마 -->

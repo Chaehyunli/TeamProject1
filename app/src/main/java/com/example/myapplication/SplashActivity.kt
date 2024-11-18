@@ -20,9 +20,11 @@ class SplashActivity : AppCompatActivity() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 SubwayGraphInstance.initialize(this@SplashActivity)
-                SubwayMapDataInstance.initialize(this@SplashActivity) // 데이터 초기화
+                SubwayMapDataInstance.initialize(this@SplashActivity)
             }
-            startMainActivity()
+            withContext(Dispatchers.Main) {
+                startMainActivity()
+            }
         }
     }
 
