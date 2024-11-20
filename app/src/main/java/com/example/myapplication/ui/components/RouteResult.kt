@@ -51,16 +51,20 @@ fun RouteResultItem(
         colors = CardDefaults.cardColors(containerColor = Color(0xFFffffff))
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 4
-
-                .dp),
+            modifier = Modifier.padding(horizontal = 4.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // 경로 기준 출력
+            Text(
+                text = route.criteria.toString(),
+                fontSize = 16.sp,
+                color = Color.Blue // 텍스트 색상 설정
+            )
             // 시간, 환승, 요금 정보
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
                     text = timeText,
-                    fontSize = 22.sp,
+                    fontSize = 20.sp,
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
