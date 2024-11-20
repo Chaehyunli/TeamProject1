@@ -18,14 +18,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-<<<<<<< HEAD
-import androidx.compose.foundation.gestures.detectDragGestures
 import com.example.myapplication.SubwayMapDataInstance
 import com.example.myapplication.ui.components.getLineColor
-=======
-import com.example.myapplication.ui.components.loadConnections
-import com.example.myapplication.ui.components.loadStationCoordinates
->>>>>>> suha_b
 
 @Composable
 fun SubwayMapScreen(
