@@ -2,19 +2,18 @@
 package com.example.myapplication.ui.screens
 
 import SortButton
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,13 +22,13 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.example.myapplication.R
 import com.example.myapplication.RouteFinder
 import com.example.myapplication.SubwayGraphInstance
 import com.example.myapplication.ui.components.RouteInputField
+import com.example.myapplication.ui.components.RouteResultItem
 import com.example.myapplication.ui.components.WarningDialog
 
 @Composable
@@ -202,14 +201,13 @@ fun RouteSearchScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
                 Divider(color = Color(0xFF808590), thickness = 0.5.dp)
-                Spacer(modifier = Modifier.height(8.dp))
 
                 // 경로 찾기 결과 표시
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
-                        .padding(16.dp)
+                        .padding(8.dp)
                 ) {
                     searchResults?.sortedWith(
                         when (selectedSortCriteria) {
@@ -220,49 +218,14 @@ fun RouteSearchScreen(
                             else -> compareBy { it.time }
                         }
                     )?.forEachIndexed { index, route ->
-                        Text(
-                            text = """
-                            경로: ${route.path.joinToString(" -> ")}
-                            기준: ${route.criteria.joinToString(", ")}
-                            총 시간: ${route.time}초
-                            총 거리: ${route.distance}m
-                            환승 횟수: ${route.transfers}회
-                            총 비용: ${route.cost}원
-                        """.trimIndent(),
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .clickable {
-                                    // 각 필드를 개별 문자열로 전달
-                                    val path = route.path.joinToString(",")
-                                    val time = route.time
-                                    val distance = route.distance
-                                    val transfers = route.transfers
-                                    val cost = route.cost
-
-                                    // lineNumbers를 경로 길이에 맞게 조정
-                                    val adjustedLineNumbers = if (route.lineNumbers.size >= route.path.size - 1) {
-                                        route.lineNumbers.subList(0, route.path.size - 1)
-                                    } else {
-                                        route.lineNumbers + List(route.path.size - 1 - route.lineNumbers.size) { -1 }
-                                    }
-
-                                    val lineNumbers = adjustedLineNumbers.joinToString(",")
-
-                                    // 환승역 목록 생성 및 문자열로 변환
-                                    val transferStations = route.path.filterIndexed { idx, _ ->
-                                        idx > 0 && adjustedLineNumbers.getOrNull(idx) != adjustedLineNumbers.getOrNull(idx - 1)
-                                    }.joinToString(",")
-
-                                    // 경로 상세 화면으로 이동
-                                    navController.navigate(
-                                        "routeDetail/$path/$transferStations/$time/$distance/$transfers/$cost/$lineNumbers"
-                                    )
-                                },
-                            color = Color.DarkGray,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
-                        )
                         Spacer(modifier = Modifier.height(8.dp))
+                        RouteResultItem(route = route, navController = navController)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Divider(
+                            color = Color.Gray, // 원하는 색상
+                            thickness = 1.dp, // 선의 두께
+                            modifier = Modifier.fillMaxWidth() // 화면 가로를 채우는 선
+                        )
                     }
                 }
 
