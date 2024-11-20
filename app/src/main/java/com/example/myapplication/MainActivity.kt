@@ -29,6 +29,9 @@ class MainActivity : ComponentActivity() {
                 var isLoading by remember { mutableStateOf(true) } // 초기 로딩 상태
                 val navController = rememberNavController()
 
+                // SampleDataViewModel을 생성하여 초기화
+                val sampleDataViewModel: SampleDataViewModel = viewModel()
+
                 // 데이터 초기화 (비동기 처리)
                 LaunchedEffect(Unit) {
                     withContext(Dispatchers.IO) {

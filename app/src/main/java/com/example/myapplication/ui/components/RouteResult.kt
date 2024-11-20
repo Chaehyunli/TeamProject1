@@ -18,12 +18,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.myapplication.RouteFinder
+import java.text.NumberFormat
+import java.util.*
 
 @Composable
 fun RouteResultItem(
     route: RouteFinder.RouteInfo,
     navController: NavController,
 ) {
+    // 시간, 분, 초 계산
+    val hours = route.time / 3600
+    val minutes = (route.time % 3600) / 60
+    val seconds = route.time % 60 // 여전히 Int로 유지
+    val formattedSeconds = seconds.toString().padStart(2, '0') // 출력할 때만 문자열 변환
+    val formattedCost = NumberFormat.getNumberInstance(Locale.getDefault()).format(route.cost)
+
+    val timeText = when {
+        hours > 0 && minutes == 0 && seconds == 0 -> "${hours}시간" // 정시만 표시
+        hours > 0 && minutes > 0 && seconds == 0 -> "${hours}시간 ${minutes}분" // 시간과 분만 표시 (초 0)
+        hours == 0 && minutes > 0 && seconds == 0 -> "${minutes}분" // 분만 표시 (시간과 초 0)
+        hours == 0 && minutes == 0 && seconds > 0 -> "${formattedSeconds}초" // 초만 표시 (시간과 분 0)
+        hours > 0 && minutes > 0 && seconds > 0 -> "${hours}시간 ${minutes}분 ${formattedSeconds}초" // 전부 표시
+        hours == 0 && minutes > 0 && seconds > 0 -> "${minutes}분 ${formattedSeconds}초" // 분과 초만 표시
+        else -> "${formattedSeconds}초" // 기본값으로 초만 표시
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,21 +58,13 @@ fun RouteResultItem(
         ) {
             // 시간, 환승, 요금 정보
             Row(verticalAlignment = Alignment.Bottom) {
-                val hours = route.time / 3600
-                val minutes = (route.time % 3600) / 60
-                val timeText = when {
-                    hours > 0 && minutes == 0 -> "${hours}시간" // 정시만 표시
-                    hours > 0 -> "${hours}시간 ${minutes}분"    // 시간과 분 표시
-                    else -> "${minutes}분"                     // 분만 표시
-                }
-
                 Text(
                     text = timeText,
                     fontSize = 22.sp,
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "환승 ${route.transfers}회 | 요금 ${route.cost}원",
+                    text = "환승 ${route.transfers}회 | 요금 ${formattedCost}원",
                     fontSize = 14.sp,
                     color = Color.Gray
                 )
@@ -139,18 +150,7 @@ fun RouteResultItem(
                         modifier = Modifier
                             .size(15.dp)
                             .background(
-                                color = when (route.lineNumbers.lastOrNull()) {
-                                    1 -> Color(0xFF4CAF50) // 1호선
-                                    2 -> Color(0xFF2196F3) // 2호선
-                                    3 -> Color(0xFFFF9800) // 3호선
-                                    4 -> Color(0xFFFF0000) // 4호선
-                                    5 -> Color(0xFF4A7EBB) // 5호선
-                                    6 -> Color(0xFFFFC514) // 6호선
-                                    7 -> Color(0xFF92D050) // 7호선
-                                    8 -> Color(0xFF00B0F0) // 8호선
-                                    9 -> Color(0xFF7030A0) // 9호선
-                                    else -> Color(0xFFBDBDBD) // 기본 회색
-                                },
+                                color = getLineColor(route.lineNumbers.lastOrNull() ?: -1), // LineColors 사용
                                 shape = RoundedCornerShape(50) // 원형
                             )
                             .border(
@@ -187,18 +187,7 @@ fun RouteSegmentWithLineIcon(lineNumber: Int, station: String, nextStation: Stri
                 modifier = Modifier
                     .border(
                         width = 2.dp,
-                        color = when (lineNumber) {
-                            1 -> Color(0xFF4CAF50) // 1호선
-                            2 -> Color(0xFF2196F3) // 2호선
-                            3 -> Color(0xFFFF9800) // 3호선
-                            4 -> Color(0xFFFF0000) // 4호선
-                            5 -> Color(0xFF4A7EBB) // 5호선
-                            6 -> Color(0xFFFFC514) // 6호선
-                            7 -> Color(0xFF92D050) // 7호선
-                            8 -> Color(0xFF00B0F0) // 8호선
-                            9 -> Color(0xFF7030A0) // 9호선
-                            else -> Color(0xFFBDBDBD) // 기본 회색
-                        },
+                        color = getLineColor(lineNumber), // LineColors 사용
                         shape = RoundedCornerShape(4.dp)
                     )
                     .size(26.dp)
@@ -211,18 +200,7 @@ fun RouteSegmentWithLineIcon(lineNumber: Int, station: String, nextStation: Stri
             ) {
                 Text(
                     text = if (lineNumber > 0) "$lineNumber" else "",
-                    color = when (lineNumber) {
-                        1 -> Color(0xFF4CAF50) // 1호선
-                        2 -> Color(0xFF2196F3) // 2호선
-                        3 -> Color(0xFFFF9800) // 3호선
-                        4 -> Color(0xFFFF0000) // 4호선
-                        5 -> Color(0xFF4A7EBB) // 5호선
-                        6 -> Color(0xFFFFC514) // 6호선
-                        7 -> Color(0xFF92D050) // 7호선
-                        8 -> Color(0xFF00B0F0) // 8호선
-                        9 -> Color(0xFF7030A0) // 9호선
-                        else -> Color(0xFFBDBDBD) // 기본 회색
-                    },
+                    color = getLineColor(lineNumber),
                     fontSize = 17.sp,
                     lineHeight = 20.sp,
                     textAlign = TextAlign.Center,
