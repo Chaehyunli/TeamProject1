@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
@@ -19,9 +20,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.myapplication.ui.components.loadStationCoordinates
 import com.example.myapplication.ui.components.loadConnections
-import androidx.compose.foundation.gestures.detectDragGestures
+import com.example.myapplication.ui.components.loadStationCoordinates
 
 @Composable
 fun SubwayMapScreen(
@@ -160,7 +160,7 @@ fun SubwayMapScreen(
                         .size(circleRadius * 2)
                         .border(1.dp, Color.Black, CircleShape)
                         .background(
-                            if (stationId == selectedStationId) Color.Red else Color(0xFFD9EAF7),
+                            if (stationId == selectedStationId) Color(0xFF2563EB) else Color(0xFFD9EAF7),
                             CircleShape
                         ) // 선택된 역에 대해 배경색 변경
                         .clickable(enabled = !lockSelection) {
