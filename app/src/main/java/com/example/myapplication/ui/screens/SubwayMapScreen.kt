@@ -18,6 +18,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.myapplication.SubwayMapDataInstance
 import com.example.myapplication.ui.components.getLineColor
 
@@ -28,6 +29,7 @@ fun SubwayMapScreen(
     lockSelection: Boolean = false,
     centerOffset: Offset = Offset(0f, 0f),
     meetingPlace: Boolean = false,
+    navController: NavHostController // NavController를 추가하여 홈 화면으로 이동 가능하게 함
 ) {
     val stationCoordinates = SubwayMapDataInstance.stationCoordinates
     val connections = SubwayMapDataInstance.connections
@@ -80,6 +82,11 @@ fun SubwayMapScreen(
                     change.consume() // 드래그 이벤트 소비
                     rawOffsetX += dragAmount.x
                     rawOffsetY += dragAmount.y
+                }
+            }
+            .clickable {
+                if(!meetingPlace) {
+                    navController.popBackStack() // 이전 화면으로 이동
                 }
             }
     ) {

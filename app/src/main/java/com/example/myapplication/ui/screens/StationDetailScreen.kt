@@ -2,6 +2,7 @@
 package com.example.myapplication.ui.screens
 
 import SubwayMapScreen
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.myapplication.ui.components.StationDetailDialog
 import com.example.myapplication.SubwayGraphInstance
 
@@ -79,13 +81,15 @@ fun StationDetailScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues),
+                    .padding(paddingValues)
+                    .background(Color.White),
                 contentAlignment = Alignment.BottomCenter
             ) {
                 // 호선 번호가 아닌 경우에만 노선도 표시
                 if (!isLineNumber) {
                     if (stationNumber != null) {
                         SubwayMapScreen(
+                            navController = navController as NavHostController, // 타입 맞출려고 캐스팅
                             initialStationId = stationNumber, // 선택된 역을 초기 중심 역으로 설정
                             onStationSelected = { selectedStationId ->
                                 // 선택된 역이 있으면 화면 이동
