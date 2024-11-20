@@ -190,7 +190,7 @@ object SubwayGraphInstance {
     }
 
     fun getShortestDistanceRoute(startStation: Int, endStation: Int): RouteFinder.RouteInfo? {
-        return routeFinder.findShortestDistancePath(startStation, endStation)?.apply { criteria.add("최소 거리") }
+        return routeFinder.findShortestDistancePath(startStation, endStation)?.apply { criteria.add("최단 거리") }
     }
 
     fun getCheapestRoute(startStation: Int, endStation: Int): RouteFinder.RouteInfo? {
@@ -204,7 +204,7 @@ object SubwayGraphInstance {
     fun findUniqueRoutes(startStation: Int, endStation: Int): List<RouteFinder.RouteInfo> {
         // 각 기준별 경로 탐색
         val shortestTimeRoute = routeFinder.findShortestTimePath(startStation, endStation).apply { criteria.add("최소 시간") }
-        val shortestDistanceRoute = routeFinder.findShortestDistancePath(startStation, endStation).apply { criteria.add("최소 거리") }
+        val shortestDistanceRoute = routeFinder.findShortestDistancePath(startStation, endStation).apply { criteria.add("최단 거리") }
         val cheapestRoute = routeFinder.findCheapestPath(startStation, endStation).apply { criteria.add("최소 비용") }
         val fewestTransfersRoute = routeFinder.findFewestTransfersPath(startStation, endStation).apply { criteria.add("최소 환승") }
 
