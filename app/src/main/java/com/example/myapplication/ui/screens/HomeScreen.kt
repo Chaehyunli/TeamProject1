@@ -19,6 +19,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import com.example.myapplication.SubwayGraphInstance
 import com.example.myapplication.ui.components.WarningDialog
 
 @Composable
@@ -26,13 +27,25 @@ fun HomeScreen(navController: NavHostController) {
     var selectedItem by remember { mutableStateOf(0) }
     var searchText by remember { mutableStateOf("") } // 검색창 상태
     var showDialog by remember { mutableStateOf(false) }  // 경고창 표시 상태 변수
+    var warningMessage by remember { mutableStateOf("") } // 경고 메시지
     var triggerSearch by remember { mutableStateOf(false) } // 검색 버튼 트리거 상태
     val focusManager = LocalFocusManager.current // focusManager 가져오기
+
+    // 유효한 역 번호 및 호선 정의
+    val validStations = SubwayGraphInstance.subwayGraph.getAllStationNumbers() + listOf(1, 2, 3, 4, 5, 6, 7, 8, 9)
 
     // 검색 버튼 자동 클릭 감지
     LaunchedEffect(triggerSearch) {
         if (triggerSearch && searchText.isNotBlank()) {
-            navController.navigate("stationDetail/$searchText")
+            val stationId = searchText.toIntOrNull() // 숫자로 변환 가능 여부 확인
+            if (stationId != null && validStations.contains(stationId)) {
+                // 유효한 역 번호인 경우
+                navController.navigate("stationDetail/$searchText")
+            } else {
+                // 유효하지 않은 입력일 경우
+                warningMessage = "※ 유효한 역 번호를 입력해 주세요."
+                showDialog = true
+            }
             triggerSearch = false // 상태 초기화
         }
     }
@@ -45,7 +58,6 @@ fun HomeScreen(navController: NavHostController) {
         SubwayMapScreen(
             onStationSelected = { selectedStationId ->
                 // 선택된 역의 상세 화면으로 바로 이동
-                // 원래 입력 필드에 입력되고 이동 되는거 바로 이동하게 함
                 navController.navigate("stationDetail/$selectedStationId")
             },
             lockSelection = false
@@ -64,13 +76,22 @@ fun HomeScreen(navController: NavHostController) {
             StationInputField(
                 value = searchText,
                 onValueChange = { searchText = it },
-                focusManager = focusManager, // focusManager 전달
+                focusManager = focusManager,
                 onSearchClick = {
                     if (searchText.isBlank()) {
+                        warningMessage = "※ 검색할 역, 호선을 입력해 주세요."
                         showDialog = true
                         focusManager.clearFocus()
                     } else {
-                        navController.navigate("stationDetail/$searchText")
+                        val stationId = searchText.toIntOrNull() // 입력값이 숫자인지 확인
+                        if (stationId == null || !validStations.contains(stationId)) {
+                            // 유효하지 않은 입력일 경우
+                            warningMessage = "유효한 역 번호를 입력해 주세요."
+                            showDialog = true
+                        } else {
+                            // 유효한 역 번호일 경우
+                            navController.navigate("stationDetail/$searchText")
+                        }
                     }
                 },
                 modifier = Modifier
@@ -100,7 +121,7 @@ fun HomeScreen(navController: NavHostController) {
 
         if (showDialog) {
             WarningDialog(
-                message = "※ 검색할 역, 호선을 입력해 주세요.",
+                message = warningMessage,
                 onDismiss = { showDialog = false }
             )
         }
@@ -118,5 +139,6 @@ fun HomeScreen(navController: NavHostController) {
         )
     }
 }
+
 
 
