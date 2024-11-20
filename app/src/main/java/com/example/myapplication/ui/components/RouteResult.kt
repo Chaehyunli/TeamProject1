@@ -22,7 +22,7 @@ import com.example.myapplication.RouteFinder
 @Composable
 fun RouteResultItem(
     route: RouteFinder.RouteInfo,
-    navController: NavController
+    navController: NavController,
 ) {
     Card(
         modifier = Modifier
@@ -76,18 +76,7 @@ fun RouteResultItem(
                             .weight(if (isLastSegment) 1f else 1f) // 마지막 막대도 일정한 비율로 출력
                             .height(6.dp)
                             .background(
-                                color = when (line) {
-                                    1 -> Color(0xFF4CAF50) // 1호선
-                                    2 -> Color(0xFF2196F3) // 2호선
-                                    3 -> Color(0xFFFF9800) // 3호선
-                                    4 -> Color(0xFFFF0000) // 4호선
-                                    5 -> Color(0xFF4A7EBB) // 5호선
-                                    6 -> Color(0xFFFFC514) // 6호선
-                                    7 -> Color(0xFF92D050) // 7호선
-                                    8 -> Color(0xFF00B0F0) // 8호선
-                                    9 -> Color(0xFF7030A0) // 9호선
-                                    else -> Color(0xFFBDBDBD) // 기본 회색
-                                },
+                                color = getLineColor(line) // LineColors 사용
                             )
                     )
 

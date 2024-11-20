@@ -219,7 +219,39 @@ fun RouteSearchScreen(
                         }
                     )?.forEachIndexed { index, route ->
                         Spacer(modifier = Modifier.height(8.dp))
-                        RouteResultItem(route = route, navController = navController)
+                        // RouteResultItem을 클릭 가능한 항목으로 설정
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    // 클릭 시 상세 화면으로 이동
+                                    val path = route.path.joinToString(",")
+                                    val time = route.time
+                                    val distance = route.distance
+                                    val transfers = route.transfers
+                                    val cost = route.cost
+
+                                    // lineNumbers를 경로 길이에 맞게 조정
+                                    val adjustedLineNumbers = if (route.lineNumbers.size >= route.path.size - 1) {
+                                        route.lineNumbers.subList(0, route.path.size - 1)
+                                    } else {
+                                        route.lineNumbers + List(route.path.size - 1 - route.lineNumbers.size) { -1 }
+                                    }
+                                    val lineNumbers = adjustedLineNumbers.joinToString(",")
+
+                                    // 환승역 목록 생성 및 문자열로 변환
+                                    val transferStations = route.path.filterIndexed { idx, _ ->
+                                        idx > 0 && adjustedLineNumbers.getOrNull(idx) != adjustedLineNumbers.getOrNull(idx - 1)
+                                    }.joinToString(",")
+
+                                    // 경로 상세 화면으로 이동
+                                    navController.navigate(
+                                        "routeDetail/$path/$transferStations/$time/$distance/$transfers/$cost/$lineNumbers"
+                                    )
+                                }
+                        ) {
+                            RouteResultItem(route = route, navController = navController)
+                        }
                         Spacer(modifier = Modifier.height(8.dp))
                         Divider(
                             color = Color.Gray, // 원하는 색상
