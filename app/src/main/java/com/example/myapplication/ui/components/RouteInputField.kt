@@ -63,11 +63,7 @@ fun RouteInputField(
             }
             BasicTextField(
                 value = value,
-                onValueChange = { newValue ->
-                    if (newValue.all { it.isDigit() || it in '가'..'힣' }) {
-                        onValueChange(newValue)
-                    }
-                },
+                onValueChange = onValueChange,
                 textStyle = TextStyle(fontSize = 14.sp, color = Color.Black),
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Default,
