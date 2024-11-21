@@ -19,11 +19,19 @@ import com.example.myapplication.R
 
 @Composable
 fun SortButton(
-    onSortCriteriaSelected: (String) -> Unit // 정렬 기준 선택 시 RouteSearchScreen으로 콜백
+    currentSortCriteria: String, // 현재 선택된 정렬 기준을 외부에서 받음
+    onSortCriteriaSelected: (String) -> Unit, // 정렬 기준 선택 시 RouteSearchScreen으로 콜백
+    resetMenuItems: Boolean // 초기화 상태를 확인
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedSortCriteria by remember { mutableStateOf("최단 거리 순") }
     var menuItems by remember { mutableStateOf(listOf("최단 거리 순", "최소 시간 순", "최소 비용 순", "최소 환승 순")) }
+
+    // 초기화 상태가 true라면 메뉴 항목을 초기 상태로 재설정
+    LaunchedEffect(resetMenuItems) {
+        if (resetMenuItems) {
+            menuItems = listOf("최단 거리 순", "최소 시간 순", "최소 비용 순", "최소 환승 순")
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -56,9 +64,9 @@ fun SortButton(
                         .align(Alignment.CenterVertically)
                 )
 
-                // 선택된 정렬 기준 표시
+                // 외부에서 전달받은 정렬 기준 표시
                 Text(
-                    text = selectedSortCriteria,
+                    text = currentSortCriteria,
                     fontSize = 12.sp,
                     color = Color(0xFF252F42),
                     modifier = Modifier.align(Alignment.CenterVertically)
@@ -81,9 +89,8 @@ fun SortButton(
                 menuItems.forEachIndexed { index, text ->
                     DropdownMenuItem(
                         onClick = {
-                            selectedSortCriteria = text
                             expanded = false
-                            onSortCriteriaSelected(text) // 선택된 기준을 RouteSearchScreen에 전달
+                            onSortCriteriaSelected(text) // 선택된 기준을 외부로 전달
 
                             // 선택된 항목을 리스트의 맨 앞으로 이동시키고 나머지를 뒤로 정렬
                             menuItems = listOf(text) + menuItems.filter { it != text }

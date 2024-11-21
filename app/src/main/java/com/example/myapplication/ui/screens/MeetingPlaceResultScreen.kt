@@ -81,7 +81,8 @@ fun MeetingPlaceResultScreen(
                 onStationSelected = { /* 아무 동작도 하지 않음 */ },
                 lockSelection = true,
                 centerOffset = centerOffset,
-                meetingPlace = true // 약속장소 전용 플래그 전달
+                meetingPlace = true, // 약속장소 전용 플래그 전달
+                navController = navController
             )
 
             // 추천 장소 정보 카드

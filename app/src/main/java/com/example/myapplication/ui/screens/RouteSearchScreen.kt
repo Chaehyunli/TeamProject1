@@ -9,27 +9,23 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
-import com.example.myapplication.R
 import com.example.myapplication.RouteFinder
 import com.example.myapplication.SubwayGraphInstance
 import com.example.myapplication.ui.components.RouteInputField
 import com.example.myapplication.ui.components.RouteResultItem
 import com.example.myapplication.ui.components.WarningDialog
+import kotlinx.coroutines.launch
 
 @Composable
 fun RouteSearchScreen(
@@ -46,12 +42,19 @@ fun RouteSearchScreen(
     var searchResults by rememberSaveable { mutableStateOf<List<RouteFinder.RouteInfo>?>(null) }
     val focusManager = LocalFocusManager.current
     var selectedSortCriteria by rememberSaveable { mutableStateOf("최단 거리 순") }
+    var resetSortState by rememberSaveable { mutableStateOf(false) }
 
     // 출발지와 도착지 입력 필드를 관리하는 리스트
     var inputFields by rememberSaveable { mutableStateOf(listOf(startStation, endStation)) }
 
     // 지하철 전체 역 목록을 가져와 저장
     val validStations = SubwayGraphInstance.subwayGraph.getAllStationNumbers()
+
+    // 스크롤 상태 기억
+    val scrollState = rememberScrollState()
+
+    // Compose에서 CoroutineScope 생성
+    val coroutineScope = rememberCoroutineScope()
 
     // 검색 로직을 함수로 정의하여 전환 버튼과 검색 버튼에서 호출 가능하게 함
     fun onSearch() {
@@ -78,6 +81,11 @@ fun RouteSearchScreen(
                 val startStation = departure.toInt()
                 val endStation = arrival.toInt()
                 searchResults = SubwayGraphInstance.findUniqueRoutes(startStation, endStation)
+                selectedSortCriteria = "최단 거리 순"
+                resetSortState = !resetSortState // SortButton의 상태 초기화
+                coroutineScope.launch {
+                    scrollState.animateScrollTo(0)
+                }
             }
         }
         focusManager.clearFocus()
@@ -176,10 +184,16 @@ fun RouteSearchScreen(
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // SortButton with callback
-                    SortButton { criteria ->
-                        selectedSortCriteria = criteria
-                    }
+                    // 검색 버튼
+                    SortButton(
+                        currentSortCriteria = selectedSortCriteria,
+                        onSortCriteriaSelected = { criteria ->
+                            selectedSortCriteria = criteria
+                        },
+                        resetMenuItems = resetSortState // 초기화 상태 전달
+                    )
+
+                    resetSortState = !resetSortState
 
                     Spacer(modifier = Modifier.width(35.dp))
 
@@ -206,7 +220,7 @@ fun RouteSearchScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
+                        .verticalScroll(scrollState)
                         .padding(8.dp)
                 ) {
                     searchResults?.sortedWith(
@@ -259,22 +273,6 @@ fun RouteSearchScreen(
                             modifier = Modifier.fillMaxWidth() // 화면 가로를 채우는 선
                         )
                     }
-                }
-
-                Spacer(modifier = Modifier.height(38.dp))
-
-                // Guide message
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.backgroundlogo),
-                        contentDescription = "배경 이미지",
-                        modifier = Modifier
-                            .size(200.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
                 }
             }
         }

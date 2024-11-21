@@ -30,7 +30,7 @@ fun MeetingPlaceScreen(navController: NavHostController) {
     val focusManager = LocalFocusManager.current
     var selectedItem by remember { mutableStateOf(1) }
     var showAlertDialog by remember { mutableStateOf(false) }
-    var invalidStationAlert by remember { mutableStateOf(false) }
+    var warningMessage by remember { mutableStateOf("") } // 경고 메시지
     var inputFields by rememberSaveable { mutableStateOf(listOf("", "")) }
 
     Scaffold(
@@ -102,13 +102,13 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                     onClick = {
                         if (inputFields.any { it.isBlank() }) {
                             showAlertDialog = true
-                            focusManager.clearFocus()
+                            warningMessage = "※ 출발지를 입력하세요."
                         } else if (inputFields.any { field ->
                                 val stationNumber = field.toIntOrNull()
                                 stationNumber == null || SubwayGraphInstance.subwayGraph.getNeighbors(stationNumber) == null
                             }) {
-                            invalidStationAlert = true
-                            focusManager.clearFocus() // 포커스 해제
+                            showAlertDialog = true
+                            warningMessage = "※ 지하철 역이 유효하지 않습니다."
                         } else {
                             SubwayGraphInstance.calculateMeetingPlaceRoute(inputFields)?.let { result ->
                                 val meetingPlaceResult = MeetingPlaceResult(
@@ -120,9 +120,9 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                                 val inputFieldsString = inputFields.joinToString(",")
 
                                 navController.navigate("meeting_place_result/$resultString/$inputFieldsString")
-                                focusManager.clearFocus()
                             }
                         }
+                        focusManager.clearFocus()
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF242F42)),
                     shape = RoundedCornerShape(16.dp)
@@ -137,15 +137,8 @@ fun MeetingPlaceScreen(navController: NavHostController) {
 
             if (showAlertDialog) {
                 WarningDialog(
-                    message = "※ 출발지를 입력하세요.",
+                    message = warningMessage,
                     onDismiss = { showAlertDialog = false }
-                )
-            }
-
-            if (invalidStationAlert) {
-                WarningDialog(
-                    message = "※ 지하철 역이 유효하지 않습니다.",
-                    onDismiss = { invalidStationAlert = false }
                 )
             }
         }
