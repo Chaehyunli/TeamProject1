@@ -86,7 +86,7 @@ fun SubwayMapScreen(
             }
             .clickable {
                 if(!meetingPlace) {
-                    navController.popBackStack() // 이전 화면으로 이동
+                    navController.navigate("home")
                 }
             }
     ) {
