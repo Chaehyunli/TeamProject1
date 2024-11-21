@@ -87,7 +87,7 @@ fun HomeScreen(navController: NavHostController) {
                         warningMessage = "※ 검색할 역, 호선을 입력해 주세요."
                         showDialog = true
                     } else {
-                        val stationId = searchText.toIntOrNull() // 입력값이 숫자인지 확인
+                           val stationId = searchText.toIntOrNull() // 입력값이 숫자인지 확인
                         if (stationId == null || !validStations.contains(stationId)) {
                             // 유효하지 않은 입력일 경우
                             warningMessage = "※ 유효한 역 번호를 입력해 주세요."
