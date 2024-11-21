@@ -29,7 +29,7 @@ fun StationDetailScreen(
     onBack: () -> Unit
 ) {
     // stationName을 Int로 변환하여 SubwayGraphInstance에서 역 번호 가져오기
-    val stationNumber = stationName.toIntOrNull()
+    val stationNumber = stationName.trim().toIntOrNull() // 공백 제거
 
     // SubwayGraphInstance에서 해당 역 번호에 대한 정보를 개별적으로 가져오기
     val stationData = stationNumber?.let { SubwayGraphInstance.subwayGraph.stations[it] }

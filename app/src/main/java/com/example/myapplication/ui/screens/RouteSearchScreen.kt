@@ -58,8 +58,8 @@ fun RouteSearchScreen(
 
     // 검색 로직을 함수로 정의하여 전환 버튼과 검색 버튼에서 호출 가능하게 함
     fun onSearch() {
-        val departure = inputFields[0]
-        val arrival = inputFields[1]
+        val departure = inputFields[0].trim()
+        val arrival = inputFields[1].trim()
         when {
             departure.isBlank() -> {
                 alertMessage = "※ 출발지를 입력하세요."
@@ -156,7 +156,7 @@ fun RouteSearchScreen(
                         ) {
                             RouteInputField(
                                 label = "출발지 입력",
-                                value = inputFields[0],
+                                value = inputFields[0].trim(), // 공백 제거
                                 onValueChange = { newText -> inputFields = listOf(newText, inputFields[1]) },
                                 onDelete = {}, // 삭제 기능 필요 없음
                                 canDeleteField = inputFields[0].isNotEmpty(),
@@ -167,7 +167,7 @@ fun RouteSearchScreen(
 
                             RouteInputField(
                                 label = "도착지 입력",
-                                value = inputFields[1],
+                                value = inputFields[1].trim(), // 공백 제거
                                 onValueChange = { newText -> inputFields = listOf(inputFields[0], newText) },
                                 onDelete = {}, // 삭제 기능 필요 없음
                                 canDeleteField = inputFields[1].isNotEmpty(),

@@ -100,24 +100,25 @@ fun MeetingPlaceScreen(navController: NavHostController) {
 
                 Button(
                     onClick = {
-                        if (inputFields.any { it.isBlank() }) {
+                        val trimmedInputFields = inputFields.map { it.trim() } // 모든 입력값의 앞뒤 공백 제거
+                        if (trimmedInputFields.any { it.isBlank() }) {
                             showAlertDialog = true
                             warningMessage = "※ 출발지를 입력하세요."
-                        } else if (inputFields.any { field ->
+                        } else if (trimmedInputFields.any { field ->
                                 val stationNumber = field.toIntOrNull()
                                 stationNumber == null || SubwayGraphInstance.subwayGraph.getNeighbors(stationNumber) == null
                             }) {
                             showAlertDialog = true
                             warningMessage = "※ 지하철 역이 유효하지 않습니다."
                         } else {
-                            SubwayGraphInstance.calculateMeetingPlaceRoute(inputFields)?.let { result ->
+                            SubwayGraphInstance.calculateMeetingPlaceRoute(trimmedInputFields)?.let { result ->
                                 val meetingPlaceResult = MeetingPlaceResult(
                                     bestStation = result.bestStation,
                                     timesFromStartStations = result.timesFromStartStations
                                 )
 
                                 val resultString = "${meetingPlaceResult.bestStation},${meetingPlaceResult.timesFromStartStations.joinToString(",")}"
-                                val inputFieldsString = inputFields.joinToString(",")
+                                val inputFieldsString = trimmedInputFields.joinToString(",")
 
                                 navController.navigate("meeting_place_result/$resultString/$inputFieldsString")
                             }
