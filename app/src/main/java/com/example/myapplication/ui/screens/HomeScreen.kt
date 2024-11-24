@@ -17,6 +17,8 @@ import com.example.myapplication.ui.components.BottomNavigationBar
 import com.example.myapplication.ui.components.StationInputField
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import com.example.myapplication.SubwayGraphInstance
@@ -33,10 +35,6 @@ fun HomeScreen(navController: NavHostController) {
 
     // 유효한 역 번호 및 호선 정의
     val validStations = SubwayGraphInstance.subwayGraph.getAllStationNumbers() + listOf(1, 2, 3, 4, 5, 6, 7, 8, 9)
-
-    // 드래그된 오프셋 상태
-    var rawOffsetX by remember { mutableStateOf(0f) }
-    var rawOffsetY by remember { mutableStateOf(0f) }
 
     // 검색 버튼 자동 클릭 감지
     LaunchedEffect(triggerSearch) {
@@ -57,6 +55,7 @@ fun HomeScreen(navController: NavHostController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .clickable { focusManager.clearFocus() }
     ) {
         // SubwayMapScreen
         SubwayMapScreen(
