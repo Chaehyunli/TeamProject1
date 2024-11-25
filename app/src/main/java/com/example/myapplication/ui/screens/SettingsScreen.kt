@@ -58,7 +58,7 @@ fun SettingsScreen(navController: NavHostController) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { /* 이용 약관 페이지로 이동 코드 작성 */ }
+                        .clickable { navController.navigate("terms") }
                         .padding(vertical = 12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
