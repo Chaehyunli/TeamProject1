@@ -5,7 +5,6 @@ import androidx.compose.ui.geometry.Offset
 import java.io.BufferedReader
 
 object SubwayMapDataInstance {
-
     val stationCoordinates = mutableMapOf<Int, Offset>() // 역 번호와 좌표 저장
     val connections = mutableListOf<Triple<Int, Int, Int>>() // 역 연결 정보 (src, dst, line)
 
