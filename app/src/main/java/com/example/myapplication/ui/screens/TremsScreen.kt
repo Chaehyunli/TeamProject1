@@ -3,6 +3,7 @@ package com.example.myapplication.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -27,6 +28,7 @@ fun TermsScreen(navController: NavHostController) {
                     }
                 },
                 modifier = Modifier
+                    .border(1.dp, Color.LightGray)
                     .background(Color.White),
                 colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White)
             )
@@ -35,13 +37,30 @@ fun TermsScreen(navController: NavHostController) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .border(1.dp, Color.LightGray)
                     .background(Color.White)
                     .padding(paddingValues)
                     .padding(16.dp),
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Text(
+                    text = """
+                        
+                        이 프로그램은 명지대학교 2024 팀프로젝트1 
+                        1조 알로항이 제작한 어플리케이션 입니다.
 
+                        
+                        팀원명단
+                        
+                        60212232 임채현
+                        60222090 남서현
+                        60222119 이선민
+                        60232015 배수하
+                    """.trimIndent(),
+                    fontSize = 16.sp,
+                    color = Color.Black
+                )
             }
         }
     )
