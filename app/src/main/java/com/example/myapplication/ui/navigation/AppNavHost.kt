@@ -113,5 +113,11 @@ fun AppNavHost(navController: NavHostController) {
                 MeetingPlaceResultScreen(navController, meetingPlaceResult, inputFields)
             }
         }
+
+        // Settings 이용약관 화면 추가
+        composable("terms") {
+            TermsScreen()
+        }
     }
 }
+

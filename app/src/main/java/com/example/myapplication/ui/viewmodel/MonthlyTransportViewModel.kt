@@ -29,6 +29,10 @@ class MonthlyTransportViewModel(application: Application) : AndroidViewModel(app
             val costs = mutableMapOf<Int, Int>()
             val calendar = Calendar.getInstance()
 
+            // 월 바뀌어도 이전 달 데이터 잘 넘어가는지 확인하기 위함.
+            // calendar.set(Calendar.YEAR, 2024)
+            // calendar.set(Calendar.MONTH, Calendar.DECEMBER)
+
             // 현재 달 포함 최근 4개월의 데이터 가져오기
             for (i in 0 until 4) {
                 val year = calendar.get(Calendar.YEAR)

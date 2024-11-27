@@ -81,6 +81,11 @@ fun MonthlyTransportScreen(navController: NavHostController, viewModel: MonthlyT
 fun MonthlyExpenseCard(monthlyCosts: Map<Int, Int>) {
     // 현재 월과 전월 계산
     val calendar = Calendar.getInstance()
+
+    // 월 바뀌어도 이전 달 데이터 잘 넘어가는지 확인하기 위함.
+    // calendar.set(Calendar.YEAR, 2024)
+    // calendar.set(Calendar.MONTH, Calendar.DECEMBER)
+
     val currentMonth = calendar.get(Calendar.MONTH) + 1
     val previousMonth = currentMonth - 1
 
