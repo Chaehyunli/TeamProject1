@@ -5,18 +5,20 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.myapplication.SubwayGraphInstance
-import com.example.myapplication.ui.components.BottomNavigationBar // 하단 아이콘 nav
+import com.example.myapplication.ui.components.BottomNavigationBar
 import com.example.myapplication.ui.components.RouteInputField
 import com.example.myapplication.ui.components.WarningDialog
 
@@ -40,7 +42,7 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(62.dp)
-                    .border(1.dp, Color.LightGray, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+                    .border(1.dp, Color(0xFF808590), RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
                 selectedItem = selectedItem,
                 onItemSelected = { selectedItem = it },
                 navController = navController
@@ -65,6 +67,8 @@ fun MeetingPlaceScreen(navController: NavHostController) {
 
                 inputFields.forEachIndexed { index, text ->
                     RouteInputField(
+                        modifier = Modifier
+                            .shadow(8.dp,RoundedCornerShape(8.dp)),
                         label = "${index + 1}. 출발지 입력",
                         value = text,
                         onValueChange = { newValue ->
@@ -83,9 +87,7 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
-                Text(
-                    text = "사람 추가하기",
-                    color = Color(0xFF707070),
+                Row(
                     modifier = Modifier
                         .clickable {
                             if (inputFields.size < 4) {
@@ -93,10 +95,23 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                             }
                             focusManager.clearFocus()
                         }
-                        .padding(8.dp)
-                )
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.PersonAdd, // 사용할 아이콘 (필요에 따라 변경 가능)
+                        contentDescription = "사람 추가하기 아이콘",
+                        tint = Color(0xFF707070), // 아이콘 색상
+                        modifier = Modifier.size(24.dp) // 아이콘 크기
+                    )
+                    Spacer(modifier = Modifier.width(8.dp)) // 아이콘과 텍스트 간격
+                    Text(
+                        text = "사람 추가하기",
+                        color = Color(0xFF707070)
+                    )
+                }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 Button(
                     onClick = {
@@ -125,13 +140,19 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                         }
                         focusManager.clearFocus()
                     },
+                    modifier = Modifier
+                        .height(50.dp)
+                        .border(
+                            width = 2.dp, // 테두리 두께
+                            color = Color(0xFFcbd2df), // 테두리 색상
+                            shape = RoundedCornerShape(20.dp)
+                        ),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF242F42)),
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(20.dp)
                 ) {
                     Text(
                         text = "약속장소 찾기",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
+                        color = Color(0xFFcbd2df)
                     )
                 }
             }

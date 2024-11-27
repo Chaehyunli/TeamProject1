@@ -5,23 +5,19 @@ import SubwayMapScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.geometry.Offset
-
-import com.example.myapplication.ui.components.BottomNavigationBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,11 +30,16 @@ fun MeetingPlaceResultScreen(
     val bestStation = result.bestStation
     val timesFromStartStations = result.timesFromStartStations
 
+    // 소요시간 평균 계산
+    val averageTime = if (timesFromStartStations.isNotEmpty()) {
+        timesFromStartStations.sum() / timesFromStartStations.size
+    } else 0
+
     Scaffold(
         containerColor = Color.White,
         topBar = {
             TopAppBar(
-                title = { Text("약속장소 결과 보기") },
+                title = { Text(text = "약속장소 결과 보기", fontSize = 18.sp, color = Color(0xFF252f42)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
@@ -53,17 +54,7 @@ fun MeetingPlaceResultScreen(
                 modifier = Modifier.border(1.dp, Color.LightGray)
             )
         },
-        bottomBar = {
-            BottomNavigationBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(62.dp)
-                    .border(1.dp, Color.LightGray, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
-                selectedItem = selectedItem,
-                onItemSelected = { selectedItem = it },
-                navController = navController
-            )
-        }
+
     ) { innerPadding ->
         BoxWithConstraints(
             modifier = Modifier
@@ -73,7 +64,7 @@ fun MeetingPlaceResultScreen(
             // 현재 화면 중심 좌표 계산
             val centerOffset = Offset(
                 x = constraints.maxWidth / 2f,
-                y = constraints.maxHeight / 2f
+                y = constraints.maxHeight / 4f
             )
 
             SubwayMapScreen(
@@ -90,26 +81,37 @@ fun MeetingPlaceResultScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        color = Color(0xFFF3F4F6).copy(alpha = 0.9f), // 불투명 배경 추가
-                        shape = RoundedCornerShape(12.dp)
+                        color = Color.White,
+                        shape = RoundedCornerShape(topStart = 24.dp,topEnd = 24.dp)
                     )
+                    .border(1.dp,Color.LightGray, RoundedCornerShape(topStart=24.dp,topEnd=24.dp))
                     .padding(16.dp)
-                    .align(Alignment.TopCenter)
+                    .align(Alignment.BottomCenter)
             ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp,horizontal = 8.dp)
                 ) {
                     Text(
-                        text = "추천 약속장소: $bestStation",
-                        fontSize = 24.sp,
+                        text = "${bestStation}역",
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = Color(0xFFFF6F61)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    timesFromStartStations.forEachIndexed { index, time ->
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Divider(color = Color(0xFF808590), thickness = 1.dp)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "평균 소요시간 ${formatTime(averageTime)}",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF252f42)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    timesFromStartStations.forEachIndexed { index, time -> Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "출발지: ${inputFields[index]}, 소요시간: ${formatTime(time)}",
+                            text = "${inputFields[index]}역 ▶ 소요시간 ${formatTime(time)}",
                             fontSize = 16.sp,
                             color = Color.Gray
                         )

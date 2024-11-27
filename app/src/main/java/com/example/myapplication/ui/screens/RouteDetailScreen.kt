@@ -24,7 +24,7 @@ import com.example.myapplication.ui.components.TimeTextFormatter
 import com.example.myapplication.ui.components.getLineColor
 import com.example.myapplication.ui.viewmodel.RouteDetailViewModel
 import java.text.NumberFormat
-import java.util.Locale
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,19 +61,19 @@ fun RouteDetailScreen(
             TopAppBar(
                 title = {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
+                        verticalAlignment = Alignment.Bottom,
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Start
                     ) {
                         Text(
                             text = timeText,
                             fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
+                            color = Color(0xFF252f42)
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(10.dp))
                         Text(
                             text = "환승 ${transfers}회 | 요금 ${formattedCost}원",
-                            fontSize = 14.sp,
+                            fontSize = 12.sp,
                             color = Color.Gray
                         )
                     }
@@ -114,7 +114,7 @@ fun RouteDetailScreen(
 
                             val annotatedText = buildAnnotatedString {
                                 append("${currentLine}호선 ${path[segmentStartIndex]}역 ")
-                                withStyle(style = SpanStyle(fontSize = 14.sp, color = Color.Gray)) {
+                                withStyle(style = SpanStyle(fontSize = 14.sp, fontWeight = FontWeight.Normal, color = Color.Gray)) {
                                     append("| ${path[segmentStartIndex + 1]}역 방면")
                                 }
                             }
@@ -202,7 +202,6 @@ fun RouteDetailScreen(
                             Text(
                                 text = "이 경로로 선택하기",
                                 color = Color(0xFFCBD2DF),
-                                fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp,
                                 textAlign = TextAlign.Center
                             )

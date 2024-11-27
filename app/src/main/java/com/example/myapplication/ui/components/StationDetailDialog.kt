@@ -22,12 +22,12 @@ fun StationDetailDialog(
     onEndClick: () -> Unit         // 도착 버튼 클릭 이벤트
 ) {
     Card(
-        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(bottom = 0.dp)
-            .border(1.dp, Color.LightGray, shape = RoundedCornerShape(8.dp)),
+            .border(0.5.dp, Color(0xFF252f42), shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(

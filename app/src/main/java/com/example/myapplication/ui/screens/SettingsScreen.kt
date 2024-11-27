@@ -8,7 +8,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.*
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +32,7 @@ fun SettingsScreen(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(62.dp)
-                    .border(1.dp, Color.LightGray, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+                    .border(1.dp, Color(0xFF808590), RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
                 selectedItem = selectedItem,
                 onItemSelected = { selectedItem = it },
                 navController = navController

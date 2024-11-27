@@ -2,26 +2,29 @@
 package com.example.myapplication.ui.screens
 
 import SubwayMapScreen
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NearMe
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.myapplication.SubwayGraphInstance
 import com.example.myapplication.ui.components.BottomNavigationBar
 import com.example.myapplication.ui.components.StationInputField
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import com.example.myapplication.SubwayGraphInstance
 import com.example.myapplication.ui.components.WarningDialog
 
 @Composable
@@ -71,9 +74,9 @@ fun HomeScreen(navController: NavHostController) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(72.dp)
-                .padding(16.dp)
-                .align(Alignment.TopCenter),
+                .align(Alignment.TopCenter)
+                .padding(horizontal = 16.dp)
+                .padding(top = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // 검색 바
@@ -101,10 +104,10 @@ fun HomeScreen(navController: NavHostController) {
                 },
                 modifier = Modifier
                     .weight(1f)
-                    .border(1.dp, Color.Black, shape = RoundedCornerShape(16.dp)) // 테두리 추가
+                    .border(2.dp, Color(0xFF252f42), shape = RoundedCornerShape(20.dp))
             )
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(10.dp))
 
             // 길찾기 버튼
             IconButton(
@@ -112,15 +115,30 @@ fun HomeScreen(navController: NavHostController) {
                     navController.navigate("routeSearch")
                 },
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(52.dp)
                     .background(Color(0xFF252F42), shape = CircleShape)
-                    .border(1.dp, Color(0xFFCBD2DF), shape = CircleShape) // 테두리 추가
+                    .border(2.dp, Color(0xFFCBD2DF), shape = CircleShape) // 테두리 추가
             ) {
-                Icon(
-                    imageVector = Icons.Default.NearMe,
-                    contentDescription = "길찾기",
-                    tint = Color.White
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.NearMe,
+                        contentDescription = "길찾기",
+                        tint = Color(0xFFCBD3DF),
+                        modifier = Modifier.size(24.dp) // 아이콘 크기 조정
+                    )
+                    Text(
+                        text = "길찾기",
+                        color = Color(0xFFCBD3DF),
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 12.sp
+                    )
+                }
             }
         }
 
@@ -137,7 +155,7 @@ fun HomeScreen(navController: NavHostController) {
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .height(62.dp)
-                .border(1.dp, Color.LightGray, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+                .border(1.dp, Color(0xFF808590), RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
             selectedItem = selectedItem,
             onItemSelected = { selectedItem = it },
             navController = navController
