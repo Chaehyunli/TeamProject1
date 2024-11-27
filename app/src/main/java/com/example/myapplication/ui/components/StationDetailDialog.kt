@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -69,6 +70,14 @@ fun StationDetailDialog(
             ) {
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
+                    modifier = Modifier
+                        .border(
+                            width = 2.dp, // 테두리 두께
+                            color = Color(0xFF252f42), // 테두리 색상
+                            shape = RoundedCornerShape(24.dp) // 버튼 모양에 맞춘 테두리
+                        )
+                        .clip(RoundedCornerShape(24.dp))
+                        .height(40.dp),
                     onClick = onStartClick, // 출발 버튼 클릭 시 onStartClick 실행
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD0D3DC))
                 ) {
@@ -76,6 +85,14 @@ fun StationDetailDialog(
                 }
                 Spacer(modifier = Modifier.width(7.dp))
                 Button(
+                    modifier = Modifier
+                        .border(
+                            width = 2.dp, // 테두리 두께
+                            color = Color(0xFF252f42), // 테두리 색상
+                            shape = RoundedCornerShape(24.dp) // 버튼 모양에 맞춘 테두리
+                        )
+                        .clip(RoundedCornerShape(24.dp))
+                        .height(40.dp),
                     onClick = onEndClick, // 도착 버튼 클릭 시 onEndClick 실행
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD0D3DC))
                 ) {

@@ -102,7 +102,7 @@ fun MeetingPlaceScreen(navController: NavHostController) {
                         imageVector = Icons.Default.PersonAdd, // 사용할 아이콘 (필요에 따라 변경 가능)
                         contentDescription = "사람 추가하기 아이콘",
                         tint = Color(0xFF707070), // 아이콘 색상
-                        modifier = Modifier.size(24.dp) // 아이콘 크기
+                        modifier = Modifier.size(28.dp) // 아이콘 크기
                     )
                     Spacer(modifier = Modifier.width(8.dp)) // 아이콘과 텍스트 간격
                     Text(
