@@ -5,8 +5,6 @@ import java.util.*
 import android.content.Context
 import kotlin.String
 
-//import com.example.myapplication.RouteFinder
-//import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 // 지하철 역,노드, 간선 및 메인 함수가 있는 파일
 
 // Node 클래스 정의: 역 번호와 해당 역의 연결 정보 저장
@@ -276,95 +274,5 @@ object SubwayGraphInstance {
         val mean = times.average()
         return times.sumOf { ((it - mean) * (it - mean)).toInt() }
     }
-
-}
-//---------------------------------------------------------------------------------------------------------------------
-// 실행 예제
-fun main() {
-    val subwayGraph = SubwayGraph()
-
-    // 데이터 직접 로드
-    //SubwayGraphInstance.initialize(this)
-
-    // 그래프 출력
-    //subwayGraph.printTotalStations()
-    //subwayGraph.printGraph()
-
-    val routeFinder = RouteFinder(subwayGraph)
-    //val startStation = 101 // 출발역
-    //val endStation = 216 // 도착역
-    /*print("출발역 번호를 입력하세요: ")
-    val startStation = readLine()?.toIntOrNull() ?: run {
-        println("유효한 숫자가 아닙니다. 프로그램을 종료합니다.")
-        return
-    }
-
-    // 도착역 입력
-    print("도착역 번호를 입력하세요: ")
-    val endStation = readLine()?.toIntOrNull() ?: run {
-        println("유효한 숫자가 아닙니다. 프로그램을 종료합니다.")
-        return
-    }
-
-    //println("최소 시간 경로: ${routeFinder.findShortestTimePath(startStation, endStation)}")
-    //println("최소 거리 경로: ${routeFinder.findShortestDistancePath(startStation, endStation)}")
-    //println("최소 비용 경로: ${routeFinder.findCheapestPath(startStation, endStation)}")
-    //println("최소 환승 경로: ${routeFinder.findFewestTransfersPath(startStation, endStation)}")
-
-    // 각 기준별 경로 탐색
-    val shortestTimeRoute = routeFinder.findShortestTimePath(startStation, endStation).apply { criteria.add("최소 시간") }
-    val shortestDistanceRoute = routeFinder.findShortestDistancePath(startStation, endStation).apply { criteria.add("최소 거리") }
-    val cheapestRoute = routeFinder.findCheapestPath(startStation, endStation).apply { criteria.add("최소 비용") }
-    val fewestTransfersRoute = routeFinder.findFewestTransfersPath(startStation, endStation).apply { criteria.add("최소 환승") }
-
-    val routes = listOf(
-        shortestTimeRoute,
-        shortestDistanceRoute,
-        cheapestRoute,
-        fewestTransfersRoute
-    )
-
-    // 경로 중복 제거
-    val uniqueRoutes = mutableListOf<RouteFinder.RouteInfo>()
-    routes.forEach { newRoute ->
-        val duplicate = uniqueRoutes.find { it.path == newRoute.path }
-
-        if (duplicate != null) {
-            // 기존 경로와 새 경로가 같은 경우, 기준을 추가로 병합
-            duplicate.criteria.addAll(newRoute.criteria)
-        } else {
-            // 중복되지 않으면 새로운 경로로 추가
-            uniqueRoutes.add(newRoute)
-        }
-    }
-
-    // 최소 환승 경로를 찾고, 다른 경로에 동일한 환승 횟수가 있으면 `최소 환승` 기준을 추가
-    val minTransfersRoute = uniqueRoutes.find { it.criteria.contains("최소 환승") }
-    if (minTransfersRoute != null) {
-        uniqueRoutes.filter { it != minTransfersRoute && it.transfers == minTransfersRoute.transfers }.forEach {
-            it.criteria.add("최소 환승")
-        }
-        //uniqueRoutes.remove(minTransfersRoute) // 기존 최소 환승 경로 삭제
-    }
-
-    // 각 기준 별 정렬
-    //  println(it) -> RouteFinder routes의 toString() 메서드 호출
-    println("\n=== 최소 거리 기준으로 정렬 ===")
-    uniqueRoutes.sortedBy { it.distance }.forEach { println(it) }
-    // routes.sortedBy { it.distance } 까지가 객체
-
-    println("\n=== 최소 시간 기준으로 정렬 ===")
-    uniqueRoutes.sortedBy { it.time }.forEach { println(it) }
-
-    println("\n=== 최소 비용 기준으로 정렬 ===")
-    uniqueRoutes.sortedBy { it.cost }.forEach { println(it) }
-
-    println("\n=== 최소 환승 기준으로 정렬 ===")
-    uniqueRoutes.sortedBy { it.transfers }.forEach { println(it) }
-
-     */
-
-    //val result = SubwayGraphInstance.calculateMeetingPlaceRoute(listOf("601", "101", "209", "102"))
-    //println(result)
 
 }

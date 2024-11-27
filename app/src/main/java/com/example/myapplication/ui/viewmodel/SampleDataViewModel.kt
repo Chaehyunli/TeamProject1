@@ -22,6 +22,9 @@ class SampleDataViewModel(application: Application) : AndroidViewModel(applicati
 
             TransportCostPreferences.setCost(context, 60000, 2024, 10) // 10월 교통비 60000원
             Log.d("SampleDataViewModel", "10월 교통비 저장: 60000원")
+
+            TransportCostPreferences.setCost(context, 24500, 2024, 11) // 11월 교통비 60000원
+            Log.d("SampleDataViewModel", "11월 교통비 저장: 24500원")
         }
     }
 }
