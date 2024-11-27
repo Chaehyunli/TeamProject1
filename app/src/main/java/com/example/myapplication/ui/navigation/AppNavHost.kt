@@ -116,7 +116,7 @@ fun AppNavHost(navController: NavHostController) {
 
         // Settings 이용약관 화면 추가
         composable("terms") {
-            TermsScreen()
+            TermsScreen(navController = navController)
         }
     }
 }
