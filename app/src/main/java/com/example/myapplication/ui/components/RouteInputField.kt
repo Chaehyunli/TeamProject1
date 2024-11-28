@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun RouteInputField(
+    modifier: Modifier,
     label: String,
     value: String,
     onValueChange: (String) -> Unit,
@@ -42,7 +43,7 @@ fun RouteInputField(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(4.dp, shape = RoundedCornerShape(8.dp))
+            .shadow(8.dp, shape = RoundedCornerShape(8.dp))
             .background(Color.White, RoundedCornerShape(8.dp))
             .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically

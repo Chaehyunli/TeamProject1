@@ -2,15 +2,26 @@
 package com.example.myapplication.ui.screens
 
 import android.util.Log
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -19,17 +30,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.myapplication.ui.components.BottomNavigationBar
-import java.text.DecimalFormat
-import java.util.Calendar
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.border
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.nativeCanvas
 import com.example.myapplication.ui.viewmodel.MonthlyTransportViewModel
+import java.text.DecimalFormat
+import java.util.*
+
+
 
 @Composable
 fun MonthlyTransportScreen(navController: NavHostController, viewModel: MonthlyTransportViewModel) {
@@ -44,7 +49,7 @@ fun MonthlyTransportScreen(navController: NavHostController, viewModel: MonthlyT
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(62.dp)
-                    .border(1.dp, Color.LightGray, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+                    .border(1.dp, Color(0xFF808590), RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
                 selectedItem = 2,
                 onItemSelected = { /* Handle item selection */ },
                 navController = navController
@@ -54,8 +59,11 @@ fun MonthlyTransportScreen(navController: NavHostController, viewModel: MonthlyT
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(horizontal = 16.dp), // 좌우 패딩
+            contentPadding = PaddingValues(
+                top = innerPadding.calculateTopPadding() + 16.dp, // innerPadding의 top 값 + 추가 간격
+                bottom = innerPadding.calculateBottomPadding() + 16.dp // innerPadding의 bottom 값 + 추가 간격
+            ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -92,39 +100,65 @@ fun MonthlyExpenseCard(monthlyCosts: Map<Int, Int>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .border(0.5.dp,Color(0xFF252f42),shape = RoundedCornerShape(10.dp))
             .shadow(16.dp, shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
-            .background(Color(0xFFCBD2DF), shape = RoundedCornerShape(12.dp))
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(Color(0xFFCBD2DF), shape = RoundedCornerShape(10.dp))
+            .padding(16.dp)
     ) {
         Text(
-            text = "${currentMonth}월 교통비",
-            fontSize = 18.sp,
+            text = " ${currentMonth}월 교통비",
+            fontSize = 14.sp,
+            color = Color(0xFF252F42)
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = buildAnnotatedString {
+                append("${formatter.format(currentMonthAmount)} ")
+                withStyle(style = SpanStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal, color = Color(0xFF252f42))){
+                    append("원")
+                }
+            },
+            fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF252F42)
         )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "${formatter.format(currentMonthAmount)} 원",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // 전월과 비교한 결과 텍스트
-        Text(
-            text = buildAnnotatedString {
-                append("${previousMonth}월보다 ")
-                withStyle(style = SpanStyle(color = if (isSavings) Color(0xFF2563EB) else Color(0xFFFF0000))) {
-                    append("${formatter.format(difference)} 원 ")
-                    append(if (isSavings) "절약" else "소비")
-                }
-            },
-            fontSize = 16.sp,
-            color = Color(0xFF252F42),
-            fontWeight = FontWeight.Bold
-        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(0.5.dp,Color(0xFF252f42),shape = RoundedCornerShape(10.dp))
+                .background(Color.White, shape = RoundedCornerShape(10.dp))
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // 전월과 비교한 결과 텍스트
+                Text(
+                    text = buildAnnotatedString {
+                        append("${previousMonth}월보다 \n")
+                        withStyle(
+                            style = SpanStyle(
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isSavings) Color(0xFF2563EB) else Color(0xFFFF0000)
+                            )
+                        ) {
+                            append("${formatter.format(difference)}원 ")
+                            append(if (isSavings) "절약" else "소비")
+                        }
+                    },
+                    fontSize = 14.sp,
+                    color = Color(0xFF252F42)
+                )
+                Image(
+                    painter = painterResource(id = if (isSavings) com.example.myapplication.R.drawable.save else com.example.myapplication.R.drawable.unsave),
+                    contentDescription = "그래프 이미지",
+                    modifier = Modifier.width(130.dp) // 이미지 크기 설정
+                )
+            }
+        }
     }
 }
 
@@ -192,70 +226,75 @@ fun RecentExpenseGraph(monthlyCosts: Map<Int, Int>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .border(0.5.dp,Color(0xFF252f42),shape = RoundedCornerShape(10.dp))
             .shadow(16.dp, shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
-            .background(Color(0xFFCBD2DF), shape = RoundedCornerShape(12.dp))
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(Color(0xFFCBD2DF), shape = RoundedCornerShape(10.dp))
+            .padding(16.dp)
     ) {
         Text(
-            text = "최근 교통비 내역",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
+            text = "최근 교통요금 내역",
+            fontSize = 14.sp,
             color = Color(0xFF252F42),
             modifier = Modifier.padding(bottom = 8.dp)
         )
-
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White, shape = RoundedCornerShape(8.dp))
-                .padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .border(0.5.dp,Color(0xFF252f42),shape = RoundedCornerShape(10.dp))
+                .background(Color.White, shape = RoundedCornerShape(10.dp))
+                .padding(16.dp)
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp),
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.SpaceEvenly
+                    .background(Color.White, shape = RoundedCornerShape(8.dp))
+                    .padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                dataPoints.forEachIndexed { index, value ->
-                    val maxBarHeight = 120.dp
-                    val barHeightRatio = value.toFloat() / maxDataValue
-                    val barHeight = maxBarHeight * barHeightRatio
-                    val barColor = colors[index % colors.size] // 색상 리스트를 순환
+                Spacer(modifier = Modifier.height(8.dp))
 
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Bottom,
-                        modifier = Modifier.padding(horizontal = 4.dp)
-                    ) {
-                        Text(
-                            text = "${formatter.format(value)}원",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF252F42),
-                            modifier = Modifier.padding(bottom = 4.dp)
-                        )
-                        Canvas(
-                            modifier = Modifier
-                                .width(30.dp)
-                                .height(barHeight)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    dataPoints.forEachIndexed { index, value ->
+                        val maxBarHeight = 120.dp
+                        val barHeightRatio = value.toFloat() / maxDataValue
+                        val barHeight = maxBarHeight * barHeightRatio
+                        val barColor = colors[index % colors.size] // 색상 리스트를 순환
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Bottom,
+                            modifier = Modifier.padding(horizontal = 4.dp)
                         ) {
-                            drawRoundRect(
-                                color = barColor,
-                                size = size,
-                                cornerRadius = androidx.compose.ui.geometry.CornerRadius(8.dp.toPx())
+                            Text(
+                                text = "${formatter.format(value)}원",
+                                fontSize = 10.sp,
+                                color = Color(0xFF252F42),
+                                modifier = Modifier.padding(bottom = 4.dp)
+                            )
+                            Canvas(
+                                modifier = Modifier
+                                    .width(30.dp)
+                                    .height(barHeight)
+                            ) {
+                                drawRoundRect(
+                                    color = barColor,
+                                    size = size,
+                                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(3.dp.toPx())
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = months[index],
+                                fontSize = 12.sp,
+                                color = Color(0xFF252F42)
                             )
                         }
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = months[index],
-                            fontSize = 12.sp,
-                            color = Color(0xFF252F42)
-                        )
                     }
                 }
             }

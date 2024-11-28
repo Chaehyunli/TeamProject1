@@ -16,10 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import com.example.myapplication.R
 import com.example.myapplication.RouteFinder
 import com.example.myapplication.SubwayGraphInstance
 import com.example.myapplication.ui.components.RouteInputField
@@ -155,6 +156,7 @@ fun RouteSearchScreen(
                                 .weight(4.5f)
                         ) {
                             RouteInputField(
+                                modifier = Modifier.background(Color.White, RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)),
                                 label = "출발지 입력",
                                 value = inputFields[0].trim(), // 공백 제거
                                 onValueChange = { newText -> inputFields = listOf(newText, inputFields[1]) },
@@ -166,6 +168,7 @@ fun RouteSearchScreen(
                             Spacer(modifier = Modifier.height(8.dp))
 
                             RouteInputField(
+                                modifier = Modifier.background(Color.White, RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)),
                                 label = "도착지 입력",
                                 value = inputFields[1].trim(), // 공백 제거
                                 onValueChange = { newText -> inputFields = listOf(inputFields[0], newText) },
@@ -195,7 +198,7 @@ fun RouteSearchScreen(
 
                     resetSortState = !resetSortState
 
-                    Spacer(modifier = Modifier.width(35.dp))
+                    Spacer(modifier = Modifier.width(30.dp))
 
                     // 검색 버튼
                     Button(
@@ -203,12 +206,19 @@ fun RouteSearchScreen(
                             onSearch() // 검색 로직 호출
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF242F42)),
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier
+                            .border(
+                                width = 2.dp, // 테두리 두께
+                                color = Color(0xFFcbd2df), // 테두리 색상
+                                shape = RoundedCornerShape(16.dp) // 버튼 모양에 맞춘 테두리
+                            )
+                            .clip(RoundedCornerShape(16.dp))
+                            .height(40.dp)
                     ) {
                         Text(
                             text = "검색",
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
+                            color = Color(0xFFcbd2df)
                         )
                     }
                 }
@@ -221,57 +231,72 @@ fun RouteSearchScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .verticalScroll(scrollState)
-                        .padding(8.dp)
+                        .padding(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally, // 이미지와 텍스트를 중앙 정렬
                 ) {
-                    searchResults?.sortedWith(
-                        when (selectedSortCriteria) {
-                            "최단 거리 순" -> compareBy { it.distance }
-                            "최소 시간 순" -> compareBy { it.time }
-                            "최소 비용 순" -> compareBy { it.cost }
-                            "최소 환승 순" -> compareBy { it.transfers }
-                            else -> compareBy { it.time }
-                        }
-                    )?.forEachIndexed { index, route ->
-                        Spacer(modifier = Modifier.height(8.dp))
-                        // RouteResultItem을 클릭 가능한 항목으로 설정
-                        Box(
+                    if (searchResults.isNullOrEmpty()) { // 검색 결과가 없을 때 처리
+                        Spacer(modifier = Modifier.height(30.dp))
+                        // PNG 이미지 표시
+                        Image(
+                            painter = painterResource(id = R.drawable.backgroundlogo), // PNG 파일 리소스
+                            contentDescription = "검색 결과 없음",
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    // 클릭 시 상세 화면으로 이동
-                                    val path = route.path.joinToString(",")
-                                    val time = route.time
-                                    val distance = route.distance
-                                    val transfers = route.transfers
-                                    val cost = route.cost
-
-                                    // lineNumbers를 경로 길이에 맞게 조정
-                                    val adjustedLineNumbers = if (route.lineNumbers.size >= route.path.size - 1) {
-                                        route.lineNumbers.subList(0, route.path.size - 1)
-                                    } else {
-                                        route.lineNumbers + List(route.path.size - 1 - route.lineNumbers.size) { -1 }
-                                    }
-                                    val lineNumbers = adjustedLineNumbers.joinToString(",")
-
-                                    // 환승역 목록 생성 및 문자열로 변환
-                                    val transferStations = route.path.filterIndexed { idx, _ ->
-                                        idx > 0 && adjustedLineNumbers.getOrNull(idx) != adjustedLineNumbers.getOrNull(idx - 1)
-                                    }.joinToString(",")
-
-                                    // 경로 상세 화면으로 이동
-                                    navController.navigate(
-                                        "routeDetail/$path/$transferStations/$time/$distance/$transfers/$cost/$lineNumbers"
-                                    )
-                                }
-                        ) {
-                            RouteResultItem(route = route, navController = navController)
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Divider(
-                            color = Color.Gray, // 원하는 색상
-                            thickness = 1.dp, // 선의 두께
-                            modifier = Modifier.fillMaxWidth() // 화면 가로를 채우는 선
+                                .size(230.dp) // 이미지 크기 설정
+                                .padding(16.dp)
                         )
+                    }else {
+                        searchResults?.sortedWith(
+                            when (selectedSortCriteria) {
+                                "최단 거리 순" -> compareBy { it.distance }
+                                "최소 시간 순" -> compareBy { it.time }
+                                "최소 비용 순" -> compareBy { it.cost }
+                                "최소 환승 순" -> compareBy { it.transfers }
+                                else -> compareBy { it.time }
+                            }
+                        )?.forEachIndexed { index, route ->
+                            Spacer(modifier = Modifier.height(8.dp))
+                            // RouteResultItem을 클릭 가능한 항목으로 설정
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        // 클릭 시 상세 화면으로 이동
+                                        val path = route.path.joinToString(",")
+                                        val time = route.time
+                                        val distance = route.distance
+                                        val transfers = route.transfers
+                                        val cost = route.cost
+
+                                        // lineNumbers를 경로 길이에 맞게 조정
+                                        val adjustedLineNumbers = if (route.lineNumbers.size >= route.path.size - 1) {
+                                            route.lineNumbers.subList(0, route.path.size - 1)
+                                        } else {
+                                            route.lineNumbers + List(route.path.size - 1 - route.lineNumbers.size) { -1 }
+                                        }
+                                        val lineNumbers = adjustedLineNumbers.joinToString(",")
+
+                                        // 환승역 목록 생성 및 문자열로 변환
+                                        val transferStations = route.path.filterIndexed { idx, _ ->
+                                            idx > 0 && adjustedLineNumbers.getOrNull(idx) != adjustedLineNumbers.getOrNull(
+                                                idx - 1
+                                            )
+                                        }.joinToString(",")
+
+                                        // 경로 상세 화면으로 이동
+                                        navController.navigate(
+                                            "routeDetail/$path/$transferStations/$time/$distance/$transfers/$cost/$lineNumbers"
+                                        )
+                                    }
+                            ) {
+                                RouteResultItem(route = route, navController = navController)
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Divider(
+                                color = Color.Gray, // 원하는 색상
+                                thickness = 1.dp, // 선의 두께
+                                modifier = Modifier.fillMaxWidth() // 화면 가로를 채우는 선
+                            )
+                        }
                     }
                 }
             }

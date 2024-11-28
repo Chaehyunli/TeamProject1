@@ -1,10 +1,10 @@
+
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -148,7 +148,7 @@ fun SubwayMapScreen(
                         .size(circleRadius * 2)
                         .border(1.dp, Color.Black, CircleShape)
                         .background(
-                            if (stationId == selectedStationId) Color(0xFF2563EB) else Color(0xFFD9EAF7),
+                            if (stationId == selectedStationId) Color(0xFFFF6F61) else Color(0xFFD9EAF7),
                             CircleShape
                         ) // 선택된 역에 대해 배경색 변경
                         .clickable(enabled = !lockSelection) {
@@ -164,7 +164,8 @@ fun SubwayMapScreen(
                     Text(
                         text = stationId.toString(),
                         fontSize = textSize,
-                        color = Color.Black
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF252f42)
                     )
                 }
             }
@@ -192,7 +193,7 @@ fun SubwayMapScreen(
 
                         // 애니메이션 효과 원 그리기
                         drawCircle(
-                            color = Color(0xFF4585F4).copy(alpha = 0.5f),
+                            color = Color(0xFFFF6F61).copy(alpha = 0.5f),
                             radius = animatedRadius.value,
                             center = Offset(
                                 centerX + with(density) { (8 * scale).dp.toPx() },

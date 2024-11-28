@@ -36,23 +36,25 @@ fun RouteResultItem(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFffffff))
     ) {
+        // 경로 기준 출력
+        Text(
+            modifier = Modifier
+                .padding(start = 8.dp),
+            text = route.criteria.toString(),
+            fontSize = 12.sp,
+            color = Color.Blue // 텍스트 색상 설정
+        )
         Column(
             modifier = Modifier.padding(horizontal = 4.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // 경로 기준 출력
-            Text(
-                text = route.criteria.toString(),
-                fontSize = 16.sp,
-                color = Color.Blue // 텍스트 색상 설정
-            )
             // 시간, 환승, 요금 정보
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
                     text = timeText,
                     fontSize = 20.sp,
                 )
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = "환승 ${route.transfers}회 | 요금 ${formattedCost}원",
                     fontSize = 14.sp,
