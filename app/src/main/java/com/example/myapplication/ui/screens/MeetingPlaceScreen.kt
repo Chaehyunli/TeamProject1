@@ -67,8 +67,6 @@ fun MeetingPlaceScreen(navController: NavHostController) {
 
                 inputFields.forEachIndexed { index, text ->
                     RouteInputField(
-                        modifier = Modifier
-                            .shadow(8.dp,RoundedCornerShape(8.dp)),
                         label = "${index + 1}. 출발지 입력",
                         value = text,
                         onValueChange = { newValue ->

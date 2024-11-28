@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun RouteInputField(
-    modifier: Modifier,
     label: String,
     value: String,
     onValueChange: (String) -> Unit,

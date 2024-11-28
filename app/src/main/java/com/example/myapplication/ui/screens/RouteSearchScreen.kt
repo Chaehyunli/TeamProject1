@@ -160,7 +160,6 @@ fun RouteSearchScreen(
                                 .weight(4.5f)
                         ) {
                             RouteInputField(
-                                modifier = Modifier.background(Color.White, RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)),
                                 label = "출발지 입력",
                                 value = inputFields[0].trim(), // 공백 제거
                                 onValueChange = { newText -> inputFields = listOf(newText, inputFields[1]) },
@@ -172,7 +171,6 @@ fun RouteSearchScreen(
                             Spacer(modifier = Modifier.height(8.dp))
 
                             RouteInputField(
-                                modifier = Modifier.background(Color.White, RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)),
                                 label = "도착지 입력",
                                 value = inputFields[1].trim(), // 공백 제거
                                 onValueChange = { newText -> inputFields = listOf(inputFields[0], newText) },
