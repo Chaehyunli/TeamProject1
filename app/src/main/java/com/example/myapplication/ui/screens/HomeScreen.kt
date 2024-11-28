@@ -26,6 +26,8 @@ import com.example.myapplication.SubwayGraphInstance
 import com.example.myapplication.ui.components.BottomNavigationBar
 import com.example.myapplication.ui.components.StationInputField
 import com.example.myapplication.ui.components.WarningDialog
+import androidx.activity.compose.BackHandler
+
 
 @Composable
 fun HomeScreen(navController: NavHostController) {
@@ -38,6 +40,12 @@ fun HomeScreen(navController: NavHostController) {
 
     // 유효한 역 번호 및 호선 정의
     val validStations = SubwayGraphInstance.subwayGraph.getAllStationNumbers() + listOf(1, 2, 3, 4, 5, 6, 7, 8, 9)
+
+    // 뒤로가기 버튼 핸들링
+    BackHandler {
+        // 뒤로가기 버튼을 눌렀을 때 앱 종료
+        (navController.context as? android.app.Activity)?.finish()
+    }
 
     // 검색 버튼 자동 클릭 감지
     LaunchedEffect(triggerSearch) {

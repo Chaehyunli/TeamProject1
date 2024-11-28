@@ -70,6 +70,10 @@ fun RouteSearchScreen(
                 alertMessage = "※ 도착지를 입력하세요."
                 showAlertDialog = true
             }
+            departure == arrival -> {
+                alertMessage = "※ 출발지와 도착지가 동일합니다."
+                showAlertDialog = true
+            }
             departure.toIntOrNull() == null || departure.toInt() !in validStations -> {
                 alertMessage = "※ 출발지 역이 유효하지 않습니다."
                 showAlertDialog = true

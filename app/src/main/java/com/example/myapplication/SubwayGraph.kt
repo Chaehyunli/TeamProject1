@@ -265,7 +265,6 @@ object SubwayGraphInstance {
                 bestTimesFromStartStations = timesFromStartStations
             }
         }
-
         return MeetingPlaceResult(bestStation, bestTimesFromStartStations)
     }
 
