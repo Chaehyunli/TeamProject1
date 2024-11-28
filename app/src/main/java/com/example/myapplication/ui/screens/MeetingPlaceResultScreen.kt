@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.myapplication.ui.components.TimeTextFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -103,7 +104,7 @@ fun MeetingPlaceResultScreen(
                     Divider(color = Color(0xFF808590), thickness = 1.dp)
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "평균 소요시간 ${formatTime(averageTime)}",
+                        text = "평균 소요시간 ${TimeTextFormatter(time = averageTime)}",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF252f42)
@@ -111,7 +112,7 @@ fun MeetingPlaceResultScreen(
                     Spacer(modifier = Modifier.height(4.dp))
                     timesFromStartStations.forEachIndexed { index, time -> Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "${inputFields[index]}역 ▶ 소요시간 ${formatTime(time)}",
+                            text = "${inputFields[index]}역 ▶ 소요시간 ${TimeTextFormatter(time = time)}",
                             fontSize = 16.sp,
                             color = Color.Gray
                         )
@@ -122,9 +123,3 @@ fun MeetingPlaceResultScreen(
     }
 }
 
-// 소요 시간을 시간, 분, 초로 변환하는 함수
-fun formatTime(seconds: Int): String {
-    val minutes = seconds / 60
-    val remainingSeconds = seconds % 60
-    return "${minutes}분 ${String.format("%02d", remainingSeconds)}초"
-}
