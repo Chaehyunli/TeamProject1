@@ -27,7 +27,6 @@ fun MeetingPlaceResultScreen(
     result: MeetingPlaceResult,
     inputFields: List<String>
 ) {
-    var selectedItem by remember { mutableStateOf(1) } // 현재 선택된 BottomNavigation 아이템 (약속장소 추천)
     val bestStation = result.bestStation
     val timesFromStartStations = result.timesFromStartStations
 

@@ -1,3 +1,4 @@
+//LineColors.kt
 package com.example.myapplication.ui.components
 
 import androidx.compose.ui.graphics.Color

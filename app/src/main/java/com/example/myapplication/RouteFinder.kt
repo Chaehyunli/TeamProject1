@@ -1,6 +1,5 @@
 // RouteFinder.kt
 package com.example.myapplication
-//import com.example.myapplication.SubwayGraph
 // 지하철 역에서 최소 시간, 최소 환승, 최소 비용, 최소 거리로 최적 경로 찾는 클래스 파일
 
 import java.util.PriorityQueue
@@ -72,7 +71,7 @@ class RouteFinder(private val graph: SubwayGraph) {
                     cost = current.cost + edge.cost,               // 비용 누적
                     transfers = newTransfers,                      // 환승 횟수 업데이트
                     path = newPath,                                // 경로 업데이트
-                    currentLine = edge.line,                        // 현재 노선 번호 업데이트
+                    currentLine = edge.line,                       // 현재 노선 번호 업데이트
                     lineNumbers = newLineNumbers
                 )
 
@@ -87,20 +86,14 @@ class RouteFinder(private val graph: SubwayGraph) {
     }
 
     // 경로 정보를 저장하는 데이터 클래스
-    // time: 총 소요 시간
-    // distance: 총 거리
-    // cost: 총 비용
-    // transfers: 총 환승 횟수
-    // path: 경로를 이루는 역들의 목록
-    // currentLine: 경로 상에서 현재의 노선 번호
     data class RouteInfo(
-        val time: Int,
-        val distance: Int,
-        val cost: Int,
-        val transfers: Int,
-        val path: List<Int>,
-        val currentLine: Int,  // 현재 노선 번호를 저장하여 환승 여부 판단
-        val lineNumbers: List<Int> // 각 구간의 호선 번호 리스트
+        val time: Int,                    // time: 총 소요 시간
+        val distance: Int,                // distance: 총 거리
+        val cost: Int,                    // cost: 총 비용
+        val transfers: Int,               // transfers: 총 환승 횟수
+        val path: List<Int>,              // path: 경로를 이루는 역들의 목록
+        val currentLine: Int,             // currentLine: 경로 상에서 현재의 노선 번호, 현재 노선 번호를 저장하여 환승 여부 판단
+        val lineNumbers: List<Int>        // 각 구간의 호선 번호 리스트
     ) {
         val criteria: MutableSet<String> = mutableSetOf() // 해당 경로가 최소 시간, 최소 비용, 최단 거리, 최소 환승 어떠한 것들에 해당되는지에 대한 정보
 
