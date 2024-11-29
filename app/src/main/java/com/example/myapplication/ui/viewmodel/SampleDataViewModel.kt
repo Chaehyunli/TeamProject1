@@ -1,4 +1,4 @@
-// src/main/java/com/example/myapplication/ui/viewmodel/SampleDataViewModel.kt
+// SampleDataViewModel.kt
 package com.example.myapplication.ui.viewmodel
 
 import android.app.Application

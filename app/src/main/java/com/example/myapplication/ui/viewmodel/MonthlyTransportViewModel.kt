@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
+// 월별 교통비를 관리하는 ViewModel
 class MonthlyTransportViewModel(application: Application) : AndroidViewModel(application) {
     private val context = application
 
@@ -20,25 +21,25 @@ class MonthlyTransportViewModel(application: Application) : AndroidViewModel(app
     val monthlyCosts: StateFlow<Map<Int, Int>> get() = _monthlyCosts
 
     init {
-        loadRecentMonthsCosts()
+        loadRecentMonthsCosts() // 초기화 시 최근 4개월 데이터 로드
     }
 
-    // 현재 달 포함 최근 4개월의 교통비를 불러오는 함수
+    // 현재 달 포함 최근 4개월의 교통비를 로드하는 함수
     private fun loadRecentMonthsCosts() {
         viewModelScope.launch {
             val costs = mutableMapOf<Int, Int>()
             val calendar = Calendar.getInstance()
 
-            // 월 바뀌어도 이전 달 데이터 잘 넘어가는지 확인하기 위함.
+            // 월 바뀌어도 이전 달 데이터 잘 넘어가는지 확인을 위한 코드 (테스트용)
             // calendar.set(Calendar.YEAR, 2024)
-            // calendar.set(Calendar.MONTH, Calendar.DECEMBER)
+            // calendar.set(Calendar.MONTH, Calendar.JANUARY)
 
             // 현재 달 포함 최근 4개월의 데이터 가져오기
             for (i in 0 until 4) {
                 val year = calendar.get(Calendar.YEAR)
-                val month = calendar.get(Calendar.MONTH) + 1 // Calendar.MONTH는 0부터 시작하므로 +1
+                val month = calendar.get(Calendar.MONTH) + 1
 
-                // `first()`를 사용하여 값을 직접 가져옴
+                // 현재 월의 교통비 데이터를 가져와 Map에 저장
                 val cost = TransportCostPreferences.getCost(context, year, month).first()
                 costs[month] = cost
                 Log.d("MonthlyTransportViewModel", "${month}월 교통비 불러오기: ${cost}원")
@@ -47,9 +48,9 @@ class MonthlyTransportViewModel(application: Application) : AndroidViewModel(app
                 calendar.add(Calendar.MONTH, -1)
             }
 
-            // 모든 데이터를 수집한 후 한 번에 StateFlow에 설정
+            // 월별 데이터를 StateFlow에 정렬된 상태로 저장
             _monthlyCosts.value = costs.toSortedMap() // 월별로 정렬하여 저장
-            Log.d("MonthlyTransportViewModel", "불러온 최근 4개월 교통비: $costs")
+            Log.d("MonthlyTransportViewModel", "불러온 최근 4개월 교통비: ${costs}")
         }
     }
 }

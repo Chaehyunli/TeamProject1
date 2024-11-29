@@ -82,9 +82,9 @@ fun MonthlyExpenseCard(monthlyCosts: Map<Int, Int>) {
     // 현재 월과 전월 계산
     val calendar = Calendar.getInstance()
 
-    // 월 바뀌어도 이전 달 데이터 잘 넘어가는지 확인하기 위함.
+    // 월 바뀌어도 이전 달 데이터 잘 넘어가는지 확인을 위한 코드 (테스트용)
     // calendar.set(Calendar.YEAR, 2024)
-    // calendar.set(Calendar.MONTH, Calendar.DECEMBER)
+    // calendar.set(Calendar.MONTH, Calendar.JANUARY)
 
     val currentMonth = calendar.get(Calendar.MONTH) + 1
     val previousMonth = currentMonth - 1

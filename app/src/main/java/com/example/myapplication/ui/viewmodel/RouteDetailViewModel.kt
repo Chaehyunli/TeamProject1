@@ -14,14 +14,14 @@ class RouteDetailViewModel(application: Application) : AndroidViewModel(applicat
     // 월별 교통비 더하기 함수
     fun addCost(additionalCost: Int) {
         viewModelScope.launch {
-            TransportCostPreferences.addCost(context, additionalCost) // 추가 요금 더하기
+            TransportCostPreferences.addCost(context, additionalCost)
         }
     }
 
     // 월별 교통비를 새 값으로 설정하는 함수 (초기화 용도)
     fun setCost(newCost: Int) {
         viewModelScope.launch {
-            TransportCostPreferences.setCost(context, newCost) // 특정 값으로 초기화
+            TransportCostPreferences.setCost(context, newCost)
         }
     }
 }
