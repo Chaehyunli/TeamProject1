@@ -17,5 +17,5 @@ val LineColors = mapOf(
 
 // 각 노선 번호에 따른 색상 반환 함수
 fun getLineColor(lineNumber: Int): Color {
-    return LineColors[lineNumber] ?: Color.Gray
+    return LineColors[lineNumber] ?: Color.Gray // 노선 번호가 없으면 회색 반환
 }

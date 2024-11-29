@@ -5,12 +5,12 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun TimeTextFormatter(
-    time: Int, // 초 단위의 시간을 입력
+    time: Int // 초 단위의 시간을 입력
 ): String {
     val hours = time / 3600
     val minutes = (time % 3600) / 60
     val seconds = time % 60
-    val formattedSeconds = seconds.toString().padStart(2, '0') // 출력할 때만 문자열 변환
+    val formattedSeconds = seconds.toString().padStart(2, '0') // 출력할 때만 문자열 변환, eg) 02초
 
     return when {
         hours > 0 && minutes == 0 && seconds == 0 -> "${hours}시간" // 정시만 표시

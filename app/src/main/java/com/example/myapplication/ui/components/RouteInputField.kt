@@ -53,6 +53,7 @@ fun RouteInputField(
                 .height(40.dp)
                 .padding(vertical = 8.dp)
         ) {
+            // 값이 비어 있고 포커스 안 되어 있을 때 라벨 텍스트 표시
             if (value.isEmpty() && !isFocused) {
                 Text(
                     text = label,
@@ -63,18 +64,18 @@ fun RouteInputField(
             }
             BasicTextField(
                 value = value,
-                onValueChange = onValueChange,
+                onValueChange = onValueChange,  // 값 변경 콜백 호출
                 textStyle = TextStyle(fontSize = 14.sp, color = Color.Black),
                 keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Default,
-                    keyboardType = KeyboardType.Text
+                    imeAction = ImeAction.Default, // 기본 키보드 동작 설정
+                    keyboardType = KeyboardType.Text // 텍스트 키보드 설정
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = { focusManager.clearFocus() }
+                    onDone = { focusManager.clearFocus() } // 완료 버튼 클릭 시 포커스 해제
                 ),
                 modifier = Modifier
                     .fillMaxSize()
-                    .onFocusChanged { focusState ->
+                    .onFocusChanged { focusState -> // 포커스 상태 변경 감지
                         isFocused = focusState.isFocused
                     }
             )
@@ -84,8 +85,10 @@ fun RouteInputField(
             IconButton(
                 onClick = {
                     if (value.isEmpty() && canDeleteField) {
+                        // MeetingPlaceScreen.kt에서 호출 시
                         onDelete() // 빈 필드일 때 필드 자체 삭제
                     } else {
+                        // RouteSearchScreen.kt에서 호출 시
                         onValueChange("") // 값이 있을 때는 값 삭제
                     }
                 },

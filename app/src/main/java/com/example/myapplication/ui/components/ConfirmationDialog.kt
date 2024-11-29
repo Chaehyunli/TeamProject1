@@ -27,7 +27,7 @@ fun ConfirmationDialog(
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .padding(horizontal = 24.dp) // 화면 양쪽에서 여백
+            .padding(horizontal = 24.dp) // 화면 양쪽의 여백
             .widthIn(max = 300.dp) // 최대 너비 조정
     ) {
         AlertDialog(
