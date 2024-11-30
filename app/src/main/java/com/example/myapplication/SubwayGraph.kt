@@ -183,7 +183,6 @@ object SubwayGraphInstance {
         return stationsInLine.distinct() // 중복 제거 후 반환
     }
 
-
     // 개별 경로에 접근할 수 있는 getter 함수 추가(디버깅용)
     fun getShortestTimeRoute(startStation: Int, endStation: Int): RouteFinder.RouteInfo? {
         return routeFinder.findShortestTimePath(startStation, endStation)?.apply { criteria.add("최소 시간") }
