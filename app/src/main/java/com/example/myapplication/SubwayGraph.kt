@@ -71,9 +71,9 @@ class SubwayGraph {
         return stations[stationNumber]?.neighbors
     }
 
-    fun printTotalStations() {
+    fun printTotalStations() { // 전체 역 수 출력(디버깅용)
         println("전체 역의 개수: ${stations.size}")
-    }
+    } 
 
     // AssetManager를 이용해 파일을 로드하는 메소드
     fun loadDataFromAssets(context: Context) {
@@ -126,24 +126,26 @@ object SubwayGraphInstance {
         println("SubwayGraph 데이터가 성공적으로 초기화되었습니다.")
     }
 
+    // 특정 노선의 역들을 순서대로 가져오는 함수
     fun getStationsByLineInOrder(lineNumber: Int): List<Int> {
-        val visited = mutableSetOf<Int>()
-        val stationsInLine = LinkedList<Int>()
+        val visited = mutableSetOf<Int>() // 방문한 역을 저장
+        val stationsInLine = LinkedList<Int>() // 노선의 역을 순서대로 저장
 
+        // 깊이 우선 탐색(DFS) 함수 정의
         fun dfs(station: Int) {
-            if (station in visited) return
+            if (station in visited) return // 이미 방문한 역이면 종료
             visited.add(station)
             stationsInLine.add(station)
 
             // 현재 역의 인접 역을 탐색
             val neighbors = subwayGraph.stations[station]?.neighbors ?: return
             neighbors.filter { it.line == lineNumber && it.destination !in visited }
-                .forEach { dfs(it.destination) }
+                .forEach { dfs(it.destination) } // 같은 노선의 인접 역 탐색
         }
 
         // 각 노선의 시작점을 설정 (예: 601번)
         val firstStationNumber = lineNumber * 100 + 1
-        var isCircularLine = false
+        var isCircularLine = false // 순환 노선인지 여부 확인
 
         // 순환 구조 여부 확인
         val startingNeighbors = subwayGraph.stations[firstStationNumber]?.neighbors
@@ -182,7 +184,7 @@ object SubwayGraphInstance {
     }
 
 
-    // 개별 경로에 접근할 수 있는 getter 함수 추가
+    // 개별 경로에 접근할 수 있는 getter 함수 추가(디버깅용)
     fun getShortestTimeRoute(startStation: Int, endStation: Int): RouteFinder.RouteInfo? {
         return routeFinder.findShortestTimePath(startStation, endStation)?.apply { criteria.add("최소 시간") }
     }

@@ -40,7 +40,7 @@ class RouteFinder(private val graph: SubwayGraph) {
         queue.add(RouteInfo(0, 0, 0, 0, listOf(start), -1, lineNumbers = emptyList()))  // -1은 초기 상태로, 아직 노선이 없음을 나타냄
 
         while (queue.isNotEmpty()) {
-            val current = queue.poll() ?: continue  // current가 null이면 다음 반복으로 넘어감
+            val current = queue.poll() ?: continue  // current가 null이면 다음 반복으로 넘어감, 큐에서 가장 우선순위가 높은 경로 가져오기
             val currentStation = current.path.last() // 현재 경로의 마지막 역 번호
 
             // 도착 역에 도달한 경우 해당 경로 정보를 반환
@@ -75,10 +75,11 @@ class RouteFinder(private val graph: SubwayGraph) {
                     lineNumbers = newLineNumbers
                 )
 
+                // 기존 경로와 비교하여 더 짧은 경로가 있으면 업데이트
                 val existingInfo = distances[edge.destination]
                 if (existingInfo == null || comparator.compare(newInfo, existingInfo) < 0) {
                     distances[edge.destination] = newInfo
-                    queue.add(newInfo)
+                    queue.add(newInfo) // 새로운 경로를 큐에 추가
                 }
             }
         }
@@ -97,7 +98,7 @@ class RouteFinder(private val graph: SubwayGraph) {
     ) {
         val criteria: MutableSet<String> = mutableSetOf() // 해당 경로가 최소 시간, 최소 비용, 최단 거리, 최소 환승 어떠한 것들에 해당되는지에 대한 정보
 
-        override fun toString(): String {
+        override fun toString(): String { // 경로 정보를 문자열로 변환하여 반환
             val criteriaStr = if (criteria.isNotEmpty()) "${criteria.joinToString(" / ")}  - " else ""
             return "${criteriaStr}시간: ${time}초, 거리: ${distance}m, 비용: ${cost}원, 환승 횟수: $transfers, 경로: ${path.joinToString(" -> ")}, 호선: ${lineNumbers.joinToString(" -> ")}"
         }

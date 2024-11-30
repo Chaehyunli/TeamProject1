@@ -11,17 +11,18 @@ object SubwayMapDataInstance {
 
     // 초기화 함수
     fun initialize(context: Context) {
-        loadStationCoordinates(context)
-        loadConnections(context)
+        loadStationCoordinates(context) // 역 좌표 데이터 로드
+        loadConnections(context) // 역 연결 데이터 로드
     }
 
+    // 역 좌표 데이터 로드 함수
     private fun loadStationCoordinates(context: Context) {
         try {
             val inputStream = context.assets.open("map_coordinate.txt")
             inputStream.bufferedReader().useLines { lines ->
                 lines.forEach { line ->
                     if (line.startsWith("src")) return@forEach // 헤더 건너뛰기
-                    val parts = line.split(",")
+                    val parts = line.split(",")  // 쉼표로 데이터 분리
                     val stationId = parts[0].toIntOrNull() ?: return@forEach
                     val x = parts[1].toFloatOrNull() ?: return@forEach
                     val y = parts[2].toFloatOrNull() ?: return@forEach
@@ -39,7 +40,7 @@ object SubwayMapDataInstance {
             inputStream.bufferedReader().useLines { lines ->
                 lines.forEach { line ->
                     if (line.startsWith("src")) return@forEach // 헤더 건너뛰기
-                    val parts = line.split(",")
+                    val parts = line.split(",") // 쉼표로 데이터 분리
                     val src = parts[0].toIntOrNull() ?: return@forEach
                     val dst = parts[1].toIntOrNull() ?: return@forEach
                     val lineNumber = parts[5].toIntOrNull() ?: return@forEach
