@@ -139,7 +139,13 @@ fun RouteSearchScreen(
                                 onClick = {
                                     val temp = inputFields[0]
                                     inputFields = listOf(inputFields[1], temp)
-                                    onSearch() // 전환 후 자동으로 검색 실행
+
+                                    focusManager.clearFocus()
+
+                                    // 두 입력 필드가 모두 채워진 경우에만 onSearch() 호출
+                                    if (inputFields.all { it.isNotBlank() }) {
+                                        onSearch() // 전환 후 자동으로 검색 실행
+                                    }
                                 },
                                 modifier = Modifier
                                     .padding(4.dp)
