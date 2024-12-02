@@ -30,7 +30,7 @@ fun MeetingPlaceResultScreen(
     val bestStation = result.bestStation
     val timesFromStartStations = result.timesFromStartStations
 
-    // 소요시간 평균 계산
+    // 평균 소요시간 계산
     val averageTime = if (timesFromStartStations.isNotEmpty()) {
         timesFromStartStations.sum() / timesFromStartStations.size
     } else 0
