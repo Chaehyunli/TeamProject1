@@ -66,12 +66,10 @@ fun RouteInputField(
                 value = value,
                 onValueChange = onValueChange,  // 값 변경 콜백 호출
                 textStyle = TextStyle(fontSize = 14.sp, color = Color.Black),
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Default, // 기본 키보드 동작 설정
-                    keyboardType = KeyboardType.Text // 텍스트 키보드 설정
-                ),
+                singleLine = true, // 한 줄 입력 필드로 설정
+                keyboardOptions = KeyboardOptions.Default, // 기본 키보드 설정
                 keyboardActions = KeyboardActions(
-                    onDone = { focusManager.clearFocus() } // 완료 버튼 클릭 시 포커스 해제
+                    onDone = { focusManager.clearFocus() } // 완료 시 포커스 해제
                 ),
                 modifier = Modifier
                     .fillMaxSize()
