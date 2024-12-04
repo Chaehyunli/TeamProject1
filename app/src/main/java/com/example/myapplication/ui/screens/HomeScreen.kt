@@ -150,6 +150,7 @@ fun HomeScreen(navController: NavHostController) {
             }
         }
 
+        // 경고 메세지 표시
         if (showDialog) {
             WarningDialog(
                 message = warningMessage,

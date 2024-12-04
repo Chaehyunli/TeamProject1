@@ -82,16 +82,12 @@ fun MonthlyExpenseCard(monthlyCosts: Map<Int, Int>) {
     // 현재 월과 전월 계산
     val calendar = Calendar.getInstance()
 
-    // 월 바뀌어도 이전 달 데이터 잘 넘어가는지 확인을 위한 코드 (테스트용)
-    // calendar.set(Calendar.YEAR, 2024)
-    // calendar.set(Calendar.MONTH, Calendar.JANUARY)
+    val currentMonth = calendar.get(Calendar.MONTH) + 1 //현재 월
+    val previousMonth = currentMonth - 1 // 전월
 
-    val currentMonth = calendar.get(Calendar.MONTH) + 1
-    val previousMonth = currentMonth - 1
-
-    val currentMonthAmount = monthlyCosts[currentMonth] ?: 0
-    val previousMonthAmount = monthlyCosts[previousMonth] ?: 0
-    val difference = kotlin.math.abs(previousMonthAmount - currentMonthAmount)
+    val currentMonthAmount = monthlyCosts[currentMonth] ?: 0 // 현재 월의 교통비 가져오기
+    val previousMonthAmount = monthlyCosts[previousMonth] ?: 0 // 전월의 교통비 가져오기
+    val difference = kotlin.math.abs(previousMonthAmount - currentMonthAmount) // 전월 교통비와 현재 월 교통비의 차이를 계산
     val isSavings = currentMonthAmount < previousMonthAmount
 
     // 숫자 형식 포맷터
@@ -162,7 +158,7 @@ fun MonthlyExpenseCard(monthlyCosts: Map<Int, Int>) {
     }
 }
 
-// 꺾은선 일단 보류
+
 @Composable
 fun LineChart(dataPoints: List<Int>, months: List<String>) {
     val maxDataValue = dataPoints.maxOrNull() ?: 1

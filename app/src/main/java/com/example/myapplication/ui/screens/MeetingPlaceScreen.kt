@@ -23,8 +23,8 @@ import com.example.myapplication.ui.components.RouteInputField
 import com.example.myapplication.ui.components.WarningDialog
 
 data class MeetingPlaceResult(
-    val bestStation: Int,
-    val timesFromStartStations: List<Int>
+    val bestStation: Int, // 추천된 약속 장소
+    val timesFromStartStations: List<Int> // 출발지 리스트에서 추천 장소까지의 소요시간
 )
 
 @Composable
