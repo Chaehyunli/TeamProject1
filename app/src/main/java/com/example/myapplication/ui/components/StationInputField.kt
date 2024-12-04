@@ -35,6 +35,15 @@ fun StationInputField(
 ) {
     var isFocused by remember { mutableStateOf(false) } // 포커스 상태 추적
     val focusRequester = remember { FocusRequester() } // FocusRequester 객체 생성
+    var requestFocus by remember { mutableStateOf(false) }
+
+    // 포커스 요청 상태가 true일 때 포커스를 설정
+    LaunchedEffect(requestFocus) {
+        if (requestFocus) {
+            focusRequester.requestFocus()
+            requestFocus = false
+        }
+    }
 
     Row(
         modifier = modifier
@@ -83,7 +92,7 @@ fun StationInputField(
                 if (isFocused) {
                     onSearchClick() // 포커스 상태라면 검색 실행
                 } else {
-                    focusRequester.requestFocus() // 포커스되지 않으면 포커스 요청
+                    requestFocus = true // 포커스 요청 상태 설정
                 }
             },
             modifier = Modifier.size(36.dp)

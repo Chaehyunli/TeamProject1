@@ -10,21 +10,18 @@ import kotlinx.coroutines.launch
 
 class SampleDataViewModel(application: Application) : AndroidViewModel(application) {
     private val context = application
+    private var isInitialized = false // 상태 플래그 추가
 
     init {
-        // 8월, 9월, 10월 교통비 임의로 저장
-        viewModelScope.launch {
-            TransportCostPreferences.setCost(context, 50000, 2024, 8)  // 8월 교통비 50000원
-            Log.d("SampleDataViewModel", "8월 교통비 저장: 50000원")
-
-            TransportCostPreferences.setCost(context, 55000, 2024, 9)  // 9월 교통비 55000원
-            Log.d("SampleDataViewModel", "9월 교통비 저장: 55000원")
-
-            TransportCostPreferences.setCost(context, 60000, 2024, 10) // 10월 교통비 60000원
-            Log.d("SampleDataViewModel", "10월 교통비 저장: 60000원")
-
-            TransportCostPreferences.setCost(context, 24500, 2024, 11) // 11월 교통비 60000원
-            Log.d("SampleDataViewModel", "11월 교통비 저장: 24500원")
+        if (!isInitialized) {
+            viewModelScope.launch {
+                TransportCostPreferences.setCost(context, 50000, 2024, 8)
+                TransportCostPreferences.setCost(context, 55000, 2024, 9)
+                TransportCostPreferences.setCost(context, 60000, 2024, 10)
+                TransportCostPreferences.setCost(context, 24500, 2024, 11)
+                isInitialized = true
+            }
+            Log.d("SampleDataViewModel", "sample 데이터 초기화 완료")
         }
     }
 }

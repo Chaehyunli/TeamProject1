@@ -2,6 +2,7 @@
 package com.example.myapplication
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import java.io.BufferedReader
 
@@ -9,10 +10,24 @@ object SubwayMapDataInstance {
     val stationCoordinates = mutableMapOf<Int, Offset>() // 역 번호와 좌표 저장
     val connections = mutableListOf<Triple<Int, Int, Int>>() // 역 연결 정보 (src, dst, line)
 
-    // 초기화 함수
+    private val lock = Any()
+
+    // 초기화 상태를 확인하기 위한 변수
+    var isInitialized = false
+        private set // 외부에서 값을 변경하지 못하도록 설정
+
     fun initialize(context: Context) {
-        loadStationCoordinates(context) // 역 좌표 데이터 로드
-        loadConnections(context) // 역 연결 데이터 로드
+        // 데이터 중복 로드 방지
+        if (!isInitialized) {
+            synchronized(lock) { // 동기화 블록으로 스레드 충돌 방지
+                if (!isInitialized) { // 다시 한 번 상태 확인
+                    loadStationCoordinates(context)
+                    loadConnections(context)
+                    isInitialized = true
+                    Log.d("SubwayMapDataInstance", "데이터 로드 완료")
+                }
+            }
+        }
     }
 
     // 역 좌표 데이터 로드 함수
@@ -35,6 +50,8 @@ object SubwayMapDataInstance {
     }
 
     private fun loadConnections(context: Context) {
+        Log.d("SubwayMapDataInstance", "loadConnections 완료")
+
         try {
             val inputStream = context.assets.open("stations.txt")
             inputStream.bufferedReader().useLines { lines ->

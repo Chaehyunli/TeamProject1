@@ -3,6 +3,8 @@ package com.example.myapplication
 
 import java.util.*
 import android.content.Context
+import android.util.Log
+import com.example.myapplication.SubwayMapDataInstance.isInitialized
 import kotlin.String
 
 // 지하철 역,노드, 간선 및 메인 함수가 있는 파일
@@ -81,7 +83,7 @@ class SubwayGraph {
             val inputStream = context.assets.open("stations.txt")
             inputStream.bufferedReader().useLines { lines ->
                 lines.forEach { line ->
-                    println("읽은 줄: $line")
+//                    println("읽은 줄: $line")
                     if (line.startsWith("src")) return@forEach // 첫 줄(헤더)은 건너뜀
 
                     val row = line.split(",")
@@ -95,7 +97,7 @@ class SubwayGraph {
                     addConnection(src, dst, distance, cost, time, line)
                 }
             }
-            println("데이터가 성공적으로 로드되었습니다.")
+            Log.d("SubwayGraph", "longDataFromAssets 완료")
         } catch (e: Exception) {
             println("파일을 읽는 중 오류 발생: ${e.message}")
         }
@@ -118,12 +120,25 @@ object SubwayGraphInstance {
 
     private val routeFinder: RouteFinder by lazy { RouteFinder(subwayGraph) }
 
-    // initialize 메서드에서 subwayGraph를 초기화
+    private val lock = Any() // 스레드 안전성을 위한 Lock 객체
+
+    // 초기화 상태를 확인하기 위한 변수
+    var isInitialized = false
+        private set // 외부에서 값을 변경하지 못하도록 설정
+
     fun initialize(context: Context) {
-        _subwayGraph = SubwayGraph().apply {
-            loadDataFromAssets(context)
+        // 데이터 중복 로드 방지
+        if (!isInitialized) {
+            synchronized(lock) { // 동기화 블록으로 스레드 충돌 방지
+                if (!isInitialized) { // 다시 한 번 상태 확인
+                    _subwayGraph = SubwayGraph().apply {
+                        loadDataFromAssets(context)
+                    }
+                    isInitialized = true
+                    Log.d("SubwayGraph", "데이터 로드 완료")
+                }
+            }
         }
-        println("SubwayGraph 데이터가 성공적으로 초기화되었습니다.")
     }
 
     // 특정 노선의 역들을 순서대로 가져오는 함수
