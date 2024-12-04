@@ -207,7 +207,16 @@ object SubwayGraphInstance {
         val cheapestRoute = routeFinder.findCheapestPath(startStation, endStation).apply { criteria.add("최소 비용") }
         val fewestTransfersRoute = routeFinder.findFewestTransfersPath(startStation, endStation).apply { criteria.add("최소 환승") }
 
-        val routes = listOf(shortestTimeRoute, shortestDistanceRoute, cheapestRoute, fewestTransfersRoute)
+        var routes = listOf(shortestTimeRoute, shortestDistanceRoute, cheapestRoute, fewestTransfersRoute)
+
+        // 더 적은 환승 횟수 경로 있으면 업데이트
+        var minTransfers = fewestTransfersRoute.transfers
+        routes.filter { it != fewestTransfersRoute && it.transfers < minTransfers }.forEach { route ->
+            route.criteria.add("최소 환승")
+        }
+
+        // routes에 더 적은 환승 횟수를 가진 다른 경로가 없을 경우에만 유지
+        routes = routes.filter { it != fewestTransfersRoute || routes.none { it != fewestTransfersRoute && it.transfers < minTransfers } }
 
         // 경로 중복 제거
         val uniqueRoutes = mutableListOf<RouteFinder.RouteInfo>()
@@ -222,11 +231,24 @@ object SubwayGraphInstance {
             }
         }
 
-        // 최소 환승 경로 기준을 동일 환승 횟수의 다른 경로에 추가
-        val minTransfersRoute = uniqueRoutes.find { it.criteria.contains("최소 환승") }
-        if (minTransfersRoute != null) {
-            uniqueRoutes.filter { it != minTransfersRoute && it.transfers == minTransfersRoute.transfers }.forEach {
-                it.criteria.add("최소 환승")
+        // 모든 기준(최소 시간, 최단 거리, 최소 비용, 최소 환승)에 대해 처리
+        val criteriaList = listOf(
+            "최소 시간" to { route: RouteFinder.RouteInfo -> route.time },
+            "최단 거리" to { route: RouteFinder.RouteInfo -> route.distance },
+            "최소 비용" to { route: RouteFinder.RouteInfo -> route.cost },
+            "최소 환승" to { route: RouteFinder.RouteInfo -> route.transfers }
+        )
+
+        criteriaList.forEach { (criterion, criterionSelector) ->
+            // 해당 기준을 가진 경로 탐색
+            val referenceRoute = uniqueRoutes.minByOrNull(criterionSelector) // 기준에 따른 최소값 경로 찾기
+            if (referenceRoute != null) {
+                // 동일한 기준을 만족하는 경로 업데이트
+                uniqueRoutes.filter { it != referenceRoute && criterionSelector(it) == criterionSelector(referenceRoute) }.forEach {
+                    it.criteria.add(criterion) // 기준 추가
+                }
+                // 기준이 만족되는 경로에도 기준 추가
+                referenceRoute.criteria.add(criterion)
             }
         }
 
