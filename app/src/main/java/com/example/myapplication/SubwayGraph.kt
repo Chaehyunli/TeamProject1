@@ -207,7 +207,14 @@ object SubwayGraphInstance {
         val cheapestRoute = routeFinder.findCheapestPath(startStation, endStation).apply { criteria.add("최소 비용") }
         val fewestTransfersRoute = routeFinder.findFewestTransfersPath(startStation, endStation).apply { criteria.add("최소 환승") }
 
-        val routes = listOf(shortestTimeRoute, shortestDistanceRoute, cheapestRoute, fewestTransfersRoute)
+        var routes = listOf(shortestTimeRoute, shortestDistanceRoute, cheapestRoute, fewestTransfersRoute)
+
+        val minTransfers = fewestTransfersRoute.transfers
+        routes.filter { it != fewestTransfersRoute && it.transfers <= minTransfers }.forEach { route ->
+            route.criteria.add("최소 환승")
+        }
+
+        routes = routes.filter { it != fewestTransfersRoute || routes.none { it != fewestTransfersRoute && it.transfers <= minTransfers } }
 
         // 경로 중복 제거
         val uniqueRoutes = mutableListOf<RouteFinder.RouteInfo>()
