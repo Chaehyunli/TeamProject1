@@ -15,6 +15,7 @@ fun TimeTextFormatter(
     return when {
         hours > 0 && minutes == 0 && seconds == 0 -> "${hours}시간" // 정시만 표시
         hours > 0 && minutes > 0 && seconds == 0 -> "${hours}시간 ${minutes}분" // 시간과 분만 표시 (초 0)
+        hours > 0 && minutes == 0 && seconds > 0 -> "${hours}시간 ${formattedSeconds}초" // 시와 초만 표시
         hours == 0 && minutes > 0 && seconds == 0 -> "${minutes}분" // 분만 표시 (시간과 초 0)
         hours == 0 && minutes == 0 && seconds > 0 -> "${formattedSeconds}초" // 초만 표시 (시간과 분 0)
         hours > 0 && minutes > 0 && seconds > 0 -> "${hours}시간 ${minutes}분 ${formattedSeconds}초" // 전부 표시
