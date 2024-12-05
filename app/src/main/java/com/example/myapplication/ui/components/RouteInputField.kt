@@ -89,6 +89,8 @@ fun RouteInputField(
                         // RouteSearchScreen.kt에서 호출 시
                         onValueChange("") // 값이 있을 때는 값 삭제
                     }
+
+                    focusManager.clearFocus()
                 },
                 modifier = Modifier
                     .size(20.dp)
