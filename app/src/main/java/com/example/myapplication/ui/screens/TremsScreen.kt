@@ -26,7 +26,7 @@ fun TermsScreen(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "이용약관", fontSize = 18.sp, color = Color(0xFF252f42)) },
+                title = { Text(text = "이용약관 및 정책", fontSize = 18.sp, color = Color(0xFF252f42)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "뒤로가기")
@@ -98,7 +98,7 @@ Metro Mapping 서비스 이용약관
 1. 본 약관에 명시되지 않은 사항은 관계 법령 및 상관례에 따릅니다.
 2. 서비스와 관련하여 발생한 분쟁은 대한민국 법령에 따라 해결합니다.
 
-본 약관은 2024년 11월 28일부터 시행됩니다.
+본 약관은 2024년 12월 11일부터 시행됩니다.
 
                     """.trimIndent(),
                     fontSize = 16.sp,
