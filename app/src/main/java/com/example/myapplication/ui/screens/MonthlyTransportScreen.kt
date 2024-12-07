@@ -34,8 +34,6 @@ import com.example.myapplication.ui.viewmodel.MonthlyTransportViewModel
 import java.text.DecimalFormat
 import java.util.*
 
-
-
 @Composable
 fun MonthlyTransportScreen(navController: NavHostController, viewModel: MonthlyTransportViewModel) {
     val monthlyCosts by viewModel.monthlyCosts.collectAsState()
