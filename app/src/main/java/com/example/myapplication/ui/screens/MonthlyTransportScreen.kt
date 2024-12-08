@@ -34,8 +34,6 @@ import com.example.myapplication.ui.viewmodel.MonthlyTransportViewModel
 import java.text.DecimalFormat
 import java.util.*
 
-
-
 @Composable
 fun MonthlyTransportScreen(navController: NavHostController, viewModel: MonthlyTransportViewModel) {
     val monthlyCosts by viewModel.monthlyCosts.collectAsState()
@@ -152,55 +150,6 @@ fun MonthlyExpenseCard(monthlyCosts: Map<Int, Int>) {
                     painter = painterResource(id = if (isSavings) com.example.myapplication.R.drawable.save else com.example.myapplication.R.drawable.unsave),
                     contentDescription = "그래프 이미지",
                     modifier = Modifier.width(130.dp) // 이미지 크기 설정
-                )
-            }
-        }
-    }
-}
-
-
-@Composable
-fun LineChart(dataPoints: List<Int>, months: List<String>) {
-    val maxDataValue = dataPoints.maxOrNull() ?: 1
-    val minDataValue = dataPoints.minOrNull() ?: 0
-    val lineColor = Color(0xFF1F77B4)
-
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        val xOffset = 20.dp.toPx() // 양쪽 여백 설정
-        val spacePerPoint = (size.width - 2 * xOffset) / (dataPoints.size - 1)
-        val verticalPadding = 20.dp.toPx()
-        val graphHeight = size.height - 2 * verticalPadding
-
-        // Path to draw the line
-        val path = Path().apply {
-            dataPoints.forEachIndexed { index, data ->
-                val x = xOffset + index * spacePerPoint
-                val y = verticalPadding + graphHeight * (1 - (data - minDataValue) / (maxDataValue - minDataValue).toFloat())
-                if (index == 0) moveTo(x, y) else lineTo(x, y)
-            }
-        }
-
-        drawPath(
-            path = path,
-            color = lineColor,
-            style = Stroke(width = 2.dp.toPx())
-        )
-
-        // Draw month label at each data point
-        dataPoints.forEachIndexed { index, data ->
-            val x = xOffset + index * spacePerPoint
-            val y = verticalPadding + graphHeight * (1 - (data - minDataValue) / (maxDataValue - minDataValue).toFloat())
-
-            drawContext.canvas.nativeCanvas.apply {
-                drawText(
-                    months[index],
-                    x,
-                    y - 10.dp.toPx(),
-                    android.graphics.Paint().apply {
-                        color = android.graphics.Color.BLACK
-                        textSize = 24f
-                        textAlign = android.graphics.Paint.Align.CENTER
-                    }
                 )
             }
         }
